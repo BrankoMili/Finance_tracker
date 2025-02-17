@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animation-delay-75 {
+    animation-delay: 75ms;
+  }
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+@layer base {
+  :root {
+    --primary: 99 102 241; /* RGB vrednosti za indigo-500 */
+    --secondary: 79 70 229; /* RGB za indigo-600 */
+    --thirdly: 48 63 159; /* RGB za indigo-700 */
+    --background: 249 250 251; /* RGB za gray-50 */
+    --foreground: 17 24 39; /* RGB za gray-900 */
+  }
+
+  * {
+    @apply transition-colors duration-200;
+  }
+}
