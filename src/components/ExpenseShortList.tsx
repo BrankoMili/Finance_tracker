@@ -44,7 +44,7 @@ export default function ExpenseShortList() {
   // sum of all expenses for this month
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
     if (expenses?.length === 0 || expensesLoading || expensesError !== null)
       return;
 
@@ -110,12 +110,16 @@ export default function ExpenseShortList() {
               key={expense.id}
               className="flex justify-between items-center text-sm pb-2 hover:bg-gray-50 rounded px-2"
             >
-              <span className="w-1/4 truncate">{expense.description}</span>
-              <span className="w-1/4 capitalize">{expense.category}</span>
-              <span className="w-1/4">
+              <span className="w-1/4 text-textMain ">
+                {expense.description}
+              </span>
+              <span className="w-1/4 capitalize text-textMain">
+                {expense.category}
+              </span>
+              <span className="w-1/4 text-textMain">
                 {expense.amount} {expense.currency}
               </span>
-              <span className="w-1/4">
+              <span className="w-1/4 text-textMain">
                 {expense.date ? format(expense.date, "dd-MM-yyyy") : "N/A"}
               </span>
             </div>
