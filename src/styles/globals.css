@@ -25,18 +25,29 @@
     --secondary: 79 70 229; /* RGB za indigo-600 */
     --thirdly: 48 63 159; /* RGB za indigo-700 */
     --background: 255 255 255; /* White */
-    --componentsBackground: 249 250 251; /* RGB za gray-50 */
+    --componentsBackground: 245 248 248; /* RGB za gray-50 */
     --textMain: 0 0 0; /* Black */
     --textSecond: 50 50 50;
     --textThird: 117 117 117; /* RGB za gray-600 */
+    --border: 235 235 235;
   }
 }
 
 /* Dark theme */
 :root[data-theme="dark"] {
-  --background: 17 24 39;
-  --componentsBackground: 31 41 55;
-  --textMain: 255 255 255;
-  --textSecond: 209 213 219;
-  --textThird: 156 163 175;
+  /* Background */
+  --background: 24 29 43; /* Tamna midnight blue baza */
+  --componentsBackground: 36 42 56; /* Srednje plava (12% svjetlija od pozadine) */
+
+  /* Glavne boje */
+  --primary: 34 211 238; /* Električni cyan (Tailwind cyan-400) */
+  --secondary: 147 197 253; /* Mekana svjetloplava (blue-300) */
+  --thirdly: 45 212 191; /* Moderan teal (teal-400) */
+
+  /* Tekst */
+  --textMain: 245 245 245; /* Čista bijela */
+  --textSecond: 190 190 190; /* Siva za sekundarni tekst */
+  --textThird: 165 165 165; /* Tamnija siva */
+
+  --border: 71 85 105;
 }

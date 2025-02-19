@@ -10,8 +10,16 @@ import { auth, provider } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 export default function Signup() {
+  interface Notification {
+    status: "success" | "error";
+    message: string;
+  }
+
   const router = useRouter();
-  const [error, setError] = useState<string>("");
+  const [notification, setNotification] = useState<Notification>({
+    status: "success",
+    message: ""
+  });
 
   const handleGoogleSignIn = async () => {
     try {
@@ -23,10 +31,17 @@ export default function Signup() {
       // Set Cookie
       document.cookie = `session=${idToken}; path=/; Secure; SameSite=Strict; Max-Age=3600`;
 
+      setNotification({
+        status: "success",
+        message: "You have successfully created an account."
+      });
       router.push("/");
     } catch (error: any) {
-      console.error("Error:", error);
-      setError("An error occurred:" + error.message);
+      console.error("error:", error);
+      setNotification({
+        status: "error",
+        message: "An notification occurred:" + notification.message
+      });
     }
   };
 
@@ -42,7 +57,10 @@ export default function Signup() {
 
     // Password validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Password do not match");
+      setNotification({
+        status: "error",
+        message: "Password do not match"
+      });
       return;
     }
 
@@ -61,6 +79,11 @@ export default function Signup() {
       // Create user profile in database
       await createUserProfile(user);
 
+      setNotification({
+        status: "success",
+        message: "You have successfully created an account."
+      });
+
       setFormData({
         username: "",
         email: "",
@@ -68,20 +91,32 @@ export default function Signup() {
         confirmPassword: ""
       });
     } catch (error: any) {
-      console.error("Error:", error);
+      console.error("error:", error);
 
       switch (error.code) {
         case "auth/email-already-in-use":
-          setError("Email already in use");
+          setNotification({
+            status: "error",
+            message: "Email already in use"
+          });
           break;
         case "auth/weak-password":
-          setError("Password should be at least 6 characters");
+          setNotification({
+            status: "error",
+            message: "Password should be at least 6 characters"
+          });
           break;
         case "auth/invalid-email":
-          setError("Invalid email address");
+          setNotification({
+            status: "error",
+            message: "Invalid email address"
+          });
           break;
         default:
-          setError("An error occurred during registration");
+          setNotification({
+            status: "error",
+            message: "An notification occurred during registration"
+          });
       }
     }
   };
@@ -93,9 +128,13 @@ export default function Signup() {
           Create Account
         </h1>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm">
-            {error}
+        {notification.message && (
+          <div
+            className={`mb-4 p-3 ${
+              notification.status === "success" ? "bg-green-600" : "bg-red-400"
+            } text-white rounded-md text-sm`}
+          >
+            {notification.message}
           </div>
         )}
 

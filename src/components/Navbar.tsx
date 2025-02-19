@@ -9,7 +9,7 @@ export default function Navbar() {
   const [user, loading, error] = useAuthState(auth);
 
   return (
-    <nav className="bg-componentsBackground border-b border-gray-200">
+    <nav className="bg-componentsBackground border-b border-border">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Search Bar */}
         <div className="relative flex-1 max-w-xl">
@@ -50,7 +50,7 @@ export default function Navbar() {
               )}
 
               <div className="ml-3">
-                <p className="text-sm font-medium text-textSecond">
+                <p className="text-sm font-medium text-textMain">
                   {user?.displayName}
                 </p>
               </div>

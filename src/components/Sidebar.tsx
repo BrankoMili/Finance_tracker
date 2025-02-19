@@ -26,7 +26,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-componentsBackground border-r border-gray-200 fixed h-full">
+    <aside className="w-64 bg-componentsBackground border-r border-border fixed h-full">
       <div className="p-6">
         <Link href={"/"}>
           <h2 className="text-2xl font-bold text-textSecond">Finance Track</h2>
@@ -42,7 +42,7 @@ export default function Sidebar() {
               className={`flex items-center px-4 py-3 rounded-xl transition-colors ${
                 pathname === item.href
                   ? "bg-blue-50 text-primary font-semibold"
-                  : "text-textThird hover:bg-gray-100"
+                  : "text-textSecond hover:bg-gray-100"
               }`}
             >
               <item.icon

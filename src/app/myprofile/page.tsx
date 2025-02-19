@@ -105,7 +105,7 @@ export default function MyProfile() {
       <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Profile Section */}
-          <div className="md:w-1/3 bg-primary/5 p-8 flex flex-col items-center space-y-6">
+          <div className="md:w-1/3 bg-primary/15 p-8 flex flex-col items-center space-y-6">
             <div>
               <img
                 src={user.photoURL || "assets/images/userIcon.svg"}
@@ -159,7 +159,7 @@ export default function MyProfile() {
           </div>
 
           {/* Right Content Section */}
-          <div className="md:w-2/3 p-8 space-y-6">
+          <div className="md:w-2/3 p-8 space-y-6 bg-componentsBackground">
             <div>
               <h2 className="text-2xl font-bold text-textSecond mb-2">
                 My Profile

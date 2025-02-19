@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { ReactNode } from "react";
+import { Theme } from "@/types/theme";
 
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -16,6 +18,14 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
     return <main>{children}</main>;
   }
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const validThemes: Theme[] = ["light", "dark"];
+    if (savedTheme && validThemes.includes(savedTheme as Theme)) {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+  }, []);
+
   return (
     <div className="flex">
       <Sidebar />
@@ -23,7 +33,7 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
         <div className="sticky top-0 z-10">
           <Navbar />
         </div>
-        <main className="p-8 bg-background">{children}</main>
+        <main className="p-8">{children}</main>
       </div>
     </div>
   );

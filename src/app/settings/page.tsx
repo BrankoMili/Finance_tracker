@@ -9,6 +9,7 @@ import {
   updatePassword
 } from "firebase/auth";
 import { showToast } from "@/utils/showToast";
+import { Theme } from "@/types/theme";
 
 export default function Settings() {
   const [userCurrency, setUserCurrency] = useState("");
@@ -19,7 +20,7 @@ export default function Settings() {
   const [authProvider, setAuthProvider] = useState<
     "password" | "google" | null
   >(null);
-  type Theme = "light" | "dark";
+
   const [theme, setTheme] = useState<Theme>("light");
 
   const handleSaveSettings = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,11 +107,7 @@ export default function Settings() {
       if (!user) return;
 
       const savedTheme = localStorage.getItem("theme");
-      const validThemes: Theme[] = ["light", "dark"];
-      if (savedTheme && validThemes.includes(savedTheme as Theme)) {
-        setTheme(savedTheme as Theme);
-        document.documentElement.setAttribute("data-theme", savedTheme);
-      }
+      setTheme(savedTheme as Theme);
 
       try {
         const userDocRef = doc(db, "users", user.uid);
@@ -185,7 +182,7 @@ export default function Settings() {
             <p className="mt-6 text-xl font-semibold text-textSecond text-xl mb-4">
               Preferences
             </p>
-            <p className="mt-3">currency:</p>
+            <p className="mt-3 text-textMain">Currency</p>
             <select
               value={userCurrency}
               onChange={e => {

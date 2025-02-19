@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Expense } from "@/types/expense";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { toast } from "react-hot-toast";
 import { auth } from "@/lib/firebase";
+import { showToast } from "@/utils/showToast";
 
 export default function ExpenseForm() {
   const [expense, setExpense] = useState<Expense>({
@@ -38,29 +38,9 @@ export default function ExpenseForm() {
         date: new Date(),
         userId: auth.currentUser?.uid
       });
-      toast.success("Successfully Added", {
-        style: {
-          border: "1px solid rgb(229 231 235)",
-          padding: "16px",
-          color: "black"
-        },
-        iconTheme: {
-          primary: "green",
-          secondary: "rgb(229 231 235)"
-        }
-      });
+      showToast("success", "Successfully Added");
     } catch (error) {
-      toast.error("Something went wrong!", {
-        style: {
-          border: "1px solid rgb(229 231 235)",
-          padding: "16px",
-          color: "black"
-        },
-        iconTheme: {
-          primary: "red",
-          secondary: "rgb(229 231 235)"
-        }
-      });
+      showToast("error", "Something went wrong!");
       console.error(error);
     }
   };
