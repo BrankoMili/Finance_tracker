@@ -19,11 +19,11 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 ml-64">
+      <div className="flex-1 ml-64 ">
         <div className="sticky top-0 z-10">
           <Navbar />
         </div>
-        <main className="p-8">{children}</main>
+        <main className="p-8 bg-background">{children}</main>
       </div>
     </div>
   );

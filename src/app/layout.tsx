@@ -20,7 +20,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-background min-h-screen`}>
+      <body className={`${inter.className} min-h-screen`}>
         <AuthGuard>
           <ToastProvider />
           <LayoutWrapper>{children}</LayoutWrapper>

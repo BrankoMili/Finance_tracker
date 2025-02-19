@@ -101,8 +101,8 @@ export default function MyProfile() {
   };
 
   return user ? (
-    <div className="bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Profile Section */}
           <div className="md:w-1/3 bg-primary/5 p-8 flex flex-col items-center space-y-6">
@@ -161,16 +161,16 @@ export default function MyProfile() {
           {/* Right Content Section */}
           <div className="md:w-2/3 p-8 space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
+              <h2 className="text-2xl font-bold text-textSecond mb-2">
                 My Profile
               </h2>
-              <p className="text-gray-500">Manage your profile information</p>
+              <p className="text-textThird">Manage your profile information</p>
             </div>
 
             <div className="space-y-4">
               <div className="bg-primary/10 p-4 rounded-lg">
                 <p className="text-sm text-primary font-semibold mb-1">Name</p>
-                <p className="text-foreground font-medium">
+                <p className="text-textSecond font-medium">
                   {user.displayName}
                 </p>
               </div>
@@ -179,7 +179,7 @@ export default function MyProfile() {
                 <p className="text-sm text-primary font-semibold mb-1">
                   Email Address
                 </p>
-                <p className="text-foreground font-medium">{user.email}</p>
+                <p className="text-textSecond font-medium">{user.email}</p>
               </div>
 
               {user.providerData[0].providerId === "google.com" && (
@@ -193,7 +193,7 @@ export default function MyProfile() {
                       alt="Google"
                       className="w-8 h-8"
                     />
-                    <span className="text-foreground font-medium">
+                    <span className="text-textSecond font-medium">
                       Google Account
                     </span>
                   </div>
@@ -216,6 +216,6 @@ export default function MyProfile() {
       </div>
     </div>
   ) : (
-    <p>User not logged in</p>
+    <p className="text-textMain">User not logged in</p>
   );
 }

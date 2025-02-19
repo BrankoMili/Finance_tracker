@@ -14,16 +14,29 @@
   }
 }
 
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Light theme */
 @layer base {
   :root {
     --primary: 99 102 241; /* RGB vrednosti za indigo-500 */
     --secondary: 79 70 229; /* RGB za indigo-600 */
     --thirdly: 48 63 159; /* RGB za indigo-700 */
-    --background: 249 250 251; /* RGB za gray-50 */
-    --foreground: 17 24 39; /* RGB za gray-900 */
+    --background: 255 255 255; /* White */
+    --componentsBackground: 249 250 251; /* RGB za gray-50 */
+    --textMain: 0 0 0; /* Black */
+    --textSecond: 50 50 50;
+    --textThird: 117 117 117; /* RGB za gray-600 */
   }
+}
 
-  * {
-    @apply transition-colors duration-200;
-  }
+/* Dark theme */
+:root[data-theme="dark"] {
+  --background: 17 24 39;
+  --componentsBackground: 31 41 55;
+  --textMain: 255 255 255;
+  --textSecond: 209 213 219;
+  --textThird: 156 163 175;
 }

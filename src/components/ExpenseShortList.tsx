@@ -68,8 +68,10 @@ export default function ExpenseShortList() {
   const errorMessage = expensesError?.message || errorExchanges?.message;
   if (errorMessage) {
     return (
-      <div className="bg-white p-6 mt-10 rounded-xl shadow-lg max-w-md mx-auto">
-        <p className="font-bold text-gray-500">Recent Expenses ({monthName})</p>
+      <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg max-w-md mx-auto">
+        <p className="font-semibold text-textThird">
+          Recent Expenses ({monthName})
+        </p>
         <div className="bg-gray-300 h-0.5 mb-3"></div>
         <div className="text-red-500 text-center p-4">{errorMessage}</div>
       </div>
@@ -77,8 +79,8 @@ export default function ExpenseShortList() {
   }
 
   return (
-    <div className="bg-white p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
-      <p className="font-bold text-gray-500">Recent Expenses ({monthName})</p>
+    <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
+      <p className="font-bold text-textThird">Recent Expenses ({monthName})</p>
       <div className="bg-gray-300 h-0.5 mb-3"></div>
       {expensesLoading ? (
         <SkeletonLoader />
@@ -86,7 +88,7 @@ export default function ExpenseShortList() {
         <div>
           <main className="flex justify-between">
             <div>
-              <p className="font-bold">Description</p>
+              <p className="font-semibold text-textSecond">Description</p>
               <ul>
                 {(expenses || []).slice(0, 5).map(expense => {
                   return <li key={expense.id}>{expense.description}</li>;
@@ -95,7 +97,7 @@ export default function ExpenseShortList() {
             </div>
 
             <div>
-              <p className="font-bold">Category</p>
+              <p className="font-semibold text-textSecond">Category</p>
               <ul>
                 {(expenses || []).slice(0, 5).map(expense => {
                   return <li key={expense.id}>{expense.category}</li>;
@@ -104,7 +106,7 @@ export default function ExpenseShortList() {
             </div>
 
             <div>
-              <p className="font-bold">Amount</p>
+              <p className="font-semibold text-textSecond">Amount</p>
               <ul>
                 {(expenses || []).slice(0, 5).map(expense => {
                   return (
@@ -117,7 +119,7 @@ export default function ExpenseShortList() {
             </div>
 
             <div>
-              <p className="font-bold">Date Added</p>
+              <p className="font-semibold text-textSecond">Date Added</p>
               <ul>
                 {(expenses || []).slice(0, 5).map(expense => {
                   return (
@@ -135,8 +137,11 @@ export default function ExpenseShortList() {
 
           {/* Monthly spending */}
           <div>
-            <p>
-              This Month Spent: {monthSpendingAmount.toFixed(2)} {userCurrency}
+            <p className="text-textSecond">
+              This Month Spent:{" "}
+              <span className="font-semibold">
+                {monthSpendingAmount.toFixed(2)} {userCurrency}
+              </span>
             </p>
           </div>
         </div>

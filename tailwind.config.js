@@ -11,7 +11,11 @@ module.exports = {
         secondary: "rgb(var(--secondary) / <alpha-value>)",
         thirdly: "rgb(var(--thirdly) / <alpha-value>)",
         background: "rgb(var(--background) / <alpha-value>)",
-        foreground: "rgb(var(--foreground) / <alpha-value>)"
+        componentsBackground:
+          "rgb(var(--componentsBackground) / <alpha-value>)",
+        textMain: "rgb(var(--textMain) / <alpha-value>)",
+        textSecond: "rgb(var(--textSecond) / <alpha-value>)",
+        textThird: "rgb(var(--textThird) / <alpha-value>)"
       }
     }
   },

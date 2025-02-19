@@ -87,9 +87,9 @@ export default function Signup() {
   };
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-foreground text-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">
           Create Account
         </h1>
 
@@ -101,7 +101,7 @@ export default function Signup() {
 
         <form onSubmit={handleEmailSignup} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Username
             </label>
             <input
@@ -109,7 +109,7 @@ export default function Signup() {
               placeholder="Enter your username"
               required
               autoComplete="username"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.username}
               onChange={e =>
                 setFormData(prev => ({ ...prev, username: e.target.value }))
@@ -118,7 +118,7 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Email
             </label>
             <input
@@ -126,7 +126,7 @@ export default function Signup() {
               placeholder="Enter your email"
               required
               autoComplete="email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.email}
               onChange={e =>
                 setFormData(prev => ({ ...prev, email: e.target.value }))
@@ -135,7 +135,7 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Password
             </label>
             <input
@@ -143,7 +143,7 @@ export default function Signup() {
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.password}
               onChange={e =>
                 setFormData(prev => ({ ...prev, password: e.target.value }))
@@ -152,7 +152,7 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Confirm Password
             </label>
             <input
@@ -160,7 +160,7 @@ export default function Signup() {
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.confirmPassword}
               onChange={e =>
                 setFormData(prev => ({
@@ -173,7 +173,7 @@ export default function Signup() {
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Sign Up
           </button>
@@ -201,11 +201,11 @@ export default function Signup() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-sm text-foreground/80">
+        <p className="mt-6 text-center text-sm text-gray-900/80">
           Already have an account?{" "}
           <button
             onClick={() => router.push("/login")}
-            className="text-primary hover:text-secondary font-medium"
+            className="text-indigo-500 hover:text-indigo-600 font-medium"
           >
             Log in
           </button>

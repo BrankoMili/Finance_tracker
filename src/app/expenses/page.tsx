@@ -68,7 +68,7 @@ export default function ExpenseShortList() {
   const errorMessage = expensesError?.message || errorExchanges?.message;
   if (errorMessage) {
     return (
-      <div className="bg-white p-6 mt-10 rounded-xl shadow-lg max-w-md mx-auto">
+      <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg max-w-md mx-auto">
         <p className="font-bold text-gray-500">Recent Expenses ({monthName})</p>
         <div className="bg-gray-300 h-0.5 mb-3"></div>
         <div className="text-red-500 text-center p-4">{errorMessage}</div>
@@ -77,7 +77,7 @@ export default function ExpenseShortList() {
   }
 
   return (
-    <div className="bg-white p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
+    <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
       <p className="font-bold text-gray-500">Recent Expenses ({monthName})</p>
       <div className="bg-gray-300 h-0.5 mb-3"></div>
       {expensesLoading ? (

@@ -68,15 +68,15 @@ export default function ExpenseForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto"
+      className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto"
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+      <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
         Add Expense
       </h2>
 
       {/* Amount Input */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-textSecond mb-1">
           Amount
         </label>
         <input
@@ -93,7 +93,7 @@ export default function ExpenseForm() {
 
       {/* Currency Select */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-textSecond mb-1">
           Currency
         </label>
         <select
@@ -114,7 +114,7 @@ export default function ExpenseForm() {
 
       {/* Description Input */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-textSecond mb-1">
           Description
         </label>
         <input
@@ -131,7 +131,7 @@ export default function ExpenseForm() {
 
       {/* Category Select */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-textSecond mb-1">
           Category
         </label>
         <select

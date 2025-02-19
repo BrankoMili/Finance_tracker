@@ -74,13 +74,13 @@ export default function Login() {
         </div>
 
         {/* Desna strana sa formom */}
-        <div className="w-full lg:w-1/2 bg-background flex items-center justify-center p-8">
+        <div className="w-full lg:w-1/2 bg-gray-50 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
-            <h1 className="text-4xl font-bold text-foreground mb-8">Sign In</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-8">Sign In</h1>
 
             <form onSubmit={handleEmailAndPasswordSignIn} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Email
                 </label>
                 <input
@@ -89,12 +89,12 @@ export default function Login() {
                   autoComplete="email"
                   required
                   placeholder="Enter your email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
                   Password
                 </label>
                 <input
@@ -103,13 +103,13 @@ export default function Login() {
                   autoComplete="current-password"
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-secondary transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="w-full bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-600 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 Log in
               </button>
@@ -121,7 +121,7 @@ export default function Login() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-background text-gray-500">OR</span>
+                  <span className="px-2 bg-gray-50 text-gray-500">OR</span>
                 </div>
               </div>
             </div>
@@ -133,11 +133,11 @@ export default function Login() {
               <GoogleSignInBtn />
             </button>
 
-            <p className="mt-8 text-center text-sm text-foreground/80">
+            <p className="mt-8 text-center text-sm text-gray-900/80">
               Don't have an account?{" "}
               <button
                 onClick={() => router.push("/signup")}
-                className="text-primary hover:text-secondary font-medium"
+                className="text-indigo-500 hover:text-indigo-600 font-medium"
               >
                 Sign up
               </button>
