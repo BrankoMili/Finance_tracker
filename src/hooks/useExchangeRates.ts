@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+const apiKey = process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY;
 
 export const useExchangeRates = (currency: string) => {
   const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({
@@ -7,7 +8,6 @@ export const useExchangeRates = (currency: string) => {
   });
   const [isExchangesLoading, setIsExchangesLoading] = useState<boolean>(true);
   const [errorExchanges, setErrorExchanges] = useState<Error | null>(null);
-  const apiKey = process.env.NEXT_PUBLIC_EXCHANGE_RATE_API_KEY;
 
   useEffect(() => {
     // Get conversion rate data from API

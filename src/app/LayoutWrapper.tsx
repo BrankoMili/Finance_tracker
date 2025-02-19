@@ -10,14 +10,6 @@ import { Theme } from "@/types/theme";
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  if (pathname === "/login") {
-    return <main>{children}</main>;
-  }
-
-  if (pathname === "/signup") {
-    return <main>{children}</main>;
-  }
-
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const validThemes: Theme[] = ["light", "dark"];
@@ -25,6 +17,14 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
       document.documentElement.setAttribute("data-theme", savedTheme);
     }
   }, []);
+
+  if (pathname === "/login") {
+    return <main>{children}</main>;
+  }
+
+  if (pathname === "/signup") {
+    return <main>{children}</main>;
+  }
 
   return (
     <div className="flex">
