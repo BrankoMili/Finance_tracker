@@ -16,7 +16,8 @@ module.exports = {
         textMain: "rgb(var(--textMain) / <alpha-value>)",
         textSecond: "rgb(var(--textSecond) / <alpha-value>)",
         textThird: "rgb(var(--textThird) / <alpha-value>)",
-        border: "rgb(var(--border) / <alpha-value>)"
+        border: "rgb(var(--border) / <alpha-value>)",
+        hoverBg: "rgb(var(--hoverBg) / <alpha-value>)"
       }
     }
   },

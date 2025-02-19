@@ -23,6 +23,11 @@ export default function Settings() {
 
   const [theme, setTheme] = useState<Theme>("light");
 
+  // Type guard for Firebase errors
+  function isFirebaseError(error: unknown): error is { code: string } {
+    return typeof error === "object" && error !== null && "code" in error;
+  }
+
   const handleSaveSettings = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -88,14 +93,18 @@ export default function Settings() {
       }
 
       showToast("success", "Successfully Changed");
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      switch (error.code) {
-        case "auth/wrong-password":
-          showToast("error", "Incorrect password");
-          break;
-        default:
-          showToast("error", "An error occurred");
+      if (isFirebaseError(error)) {
+        switch (error.code) {
+          case "auth/wrong-password":
+            showToast("error", "Incorrect password");
+            break;
+          default:
+            showToast("error", "An error occurred");
+        }
+      } else {
+        showToast("error", "An error occurred");
       }
     }
   };
@@ -145,7 +154,7 @@ export default function Settings() {
     if (!user) return;
 
     try {
-      let currentTheme = localStorage.getItem("theme");
+      const currentTheme = localStorage.getItem("theme");
       if (currentTheme !== newTheme) {
         localStorage.setItem("theme", newTheme);
       }

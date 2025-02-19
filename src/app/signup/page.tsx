@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { createUserProfile } from "@/services/userService";
 import { auth, provider } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 export default function Signup() {
   interface Notification {
@@ -36,11 +37,17 @@ export default function Signup() {
         message: "You have successfully created an account."
       });
       router.push("/");
-    } catch (error: any) {
-      console.error("error:", error);
+    } catch (error) {
+      let errorMessage = "An error occurred";
+      if (error instanceof FirebaseError) {
+        errorMessage = error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
       setNotification({
         status: "error",
-        message: "An notification occurred:" + notification.message
+        message: "An notification occurred:" + errorMessage
       });
     }
   };
@@ -90,34 +97,28 @@ export default function Signup() {
         password: "",
         confirmPassword: ""
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("error:", error);
+      let errorMessage = "An error occurred during registration";
 
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          setNotification({
-            status: "error",
-            message: "Email already in use"
-          });
-          break;
-        case "auth/weak-password":
-          setNotification({
-            status: "error",
-            message: "Password should be at least 6 characters"
-          });
-          break;
-        case "auth/invalid-email":
-          setNotification({
-            status: "error",
-            message: "Invalid email address"
-          });
-          break;
-        default:
-          setNotification({
-            status: "error",
-            message: "An notification occurred during registration"
-          });
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            errorMessage = "Email already in use";
+            break;
+          case "auth/weak-password":
+            errorMessage = "Password should be at least 6 characters";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Invalid email address";
+            break;
+        }
       }
+
+      setNotification({
+        status: "error",
+        message: errorMessage
+      });
     }
   };
 

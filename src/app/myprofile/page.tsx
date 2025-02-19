@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { deleteUserAccount } from "@/services/userService";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function MyProfile() {
   const router = useRouter();
@@ -47,9 +48,9 @@ export default function MyProfile() {
       }
 
       router.push("/login");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error deleting account", error);
-      alert(error.message || "An error occurred while deleting the account");
+      alert("An error occurred while deleting the account");
     }
   };
 
@@ -107,10 +108,12 @@ export default function MyProfile() {
           {/* Left Profile Section */}
           <div className="md:w-1/3 bg-primary/15 p-8 flex flex-col items-center space-y-6">
             <div>
-              <img
-                src={user.photoURL || "assets/images/userIcon.svg"}
+              <Image
+                src={user.photoURL || "/assets/images/userIcon.svg"}
                 alt="Profile"
-                className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
+                width={128}
+                height={128}
+                className="w-32 h-32 rounded-full border-4 border-border shadow-lg"
               />
 
               <label
@@ -188,9 +191,11 @@ export default function MyProfile() {
                     Connected Social Account
                   </p>
                   <div className="flex items-center space-x-3">
-                    <img
-                      src="assets/images/google_logo.png"
+                    <Image
+                      src="/assets/images/google_logo.png"
                       alt="Google"
+                      width={32}
+                      height={32}
                       className="w-8 h-8"
                     />
                     <span className="text-textSecond font-medium">

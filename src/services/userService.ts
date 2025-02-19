@@ -13,10 +13,10 @@ import {
 import { deleteObject, ref, listAll } from "firebase/storage";
 import { auth, provider } from "@/lib/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, User } from "firebase/auth";
 
 // Napravi novi profil
-export const createUserProfile = async (user: any) => {
+export const createUserProfile = async (user: User) => {
   const userRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(userRef);
 

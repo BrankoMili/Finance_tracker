@@ -9,11 +9,12 @@ import {
 } from "firebase/firestore";
 import { useMonth } from "./useMonth";
 import { db, auth } from "@/lib/firebase";
+import { Expense } from "@/types/expense";
 
 export const useExpenses = () => {
   const { startTimestamp, endTimestamp } = useMonth();
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
-  const [expenses, setExpenses] = useState<any[]>();
+  const [expenses, setExpenses] = useState<Expense[]>();
   const [expensesError, setExpensesError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -32,10 +33,15 @@ export const useExpenses = () => {
         const unsubscribeSnapshot = onSnapshot(
           expensesQuery,
           snapshot => {
-            const newData = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }));
+            const newData = snapshot.docs.map(doc => {
+              const data = doc.data();
+              return {
+                id: doc.id,
+                ...data,
+
+                date: data.date?.toDate() || new Date()
+              } as Expense;
+            });
             setExpenses(newData);
             setExpensesLoading(false);
           },

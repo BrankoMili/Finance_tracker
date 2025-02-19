@@ -30,6 +30,7 @@
     --textSecond: 50 50 50;
     --textThird: 117 117 117; /* RGB za gray-600 */
     --border: 235 235 235;
+    --hoverBg: 233 233 233;
   }
 }
 
@@ -50,4 +51,5 @@
   --textThird: 165 165 165; /* Tamnija siva */
 
   --border: 71 85 105;
+  --hoverBg: 245 245 245;
 }

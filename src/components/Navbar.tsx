@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
 export default function Navbar() {
   const [user, loading, error] = useAuthState(auth);
@@ -26,31 +27,37 @@ export default function Navbar() {
         {/* Profile Section */}
         <div className="ml-6 flex items-center">
           <Link href={"/myprofile"}>
-            <div className="flex items-center hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors">
+            <div className="flex items-center hover:bg-hoverBg px-3 py-2 rounded-lg transition-colors">
               {loading ? (
-                <img
+                <Image
                   src={"/assets/images/userIcon.svg"}
                   alt="Profile image"
                   className="w-7"
+                  width={32}
+                  height={32}
                 />
               ) : user === null || error ? (
-                <img
+                <Image
                   src={"/assets/images/userIcon.svg"}
                   alt="Profile image"
                   className="w-7"
+                  width={32}
+                  height={32}
                 />
               ) : (
                 <div>
-                  <img
+                  <Image
                     src={user?.photoURL || "/assets/images/userIcon.svg"}
                     alt="Profile image"
-                    className="w-7"
+                    className="w-9 rounded-full border-4 border-border"
+                    width={32}
+                    height={32}
                   />
                 </div>
               )}
 
-              <div className="ml-3">
-                <p className="text-sm font-medium text-textMain">
+              <div className="ml-2">
+                <p className="text-sm font-medium text-textSecond hover:text-textThird">
                   {user?.displayName}
                 </p>
               </div>

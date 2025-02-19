@@ -1,4 +1,7 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Expense {
+  id?: string;
   amount: number;
   description: string;
   category: "food" | "housing" | "transport" | "salary" | "other";

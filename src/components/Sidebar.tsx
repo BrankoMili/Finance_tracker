@@ -41,8 +41,8 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center px-4 py-3 rounded-xl transition-colors ${
                 pathname === item.href
-                  ? "bg-blue-50 text-primary font-semibold"
-                  : "text-textSecond hover:bg-gray-100"
+                  ? "bg-blue-50 text-primary font-semibold hover:bg-blue-100"
+                  : "text-textSecond hover:bg-hoverBg hover:text-textThird"
               }`}
             >
               <item.icon

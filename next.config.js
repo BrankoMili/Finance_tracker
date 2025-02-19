@@ -1,5 +1,8 @@
 module.exports = {
   images: {
-    path: "/assets/images"
+    domains: [
+      "lh3.googleusercontent.com", // Google user content domain
+      "firebasestorage.googleapis.com" // Firebase Storage domain
+    ]
   }
 };
