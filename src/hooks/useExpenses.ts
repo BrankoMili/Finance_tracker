@@ -14,6 +14,7 @@ import { Expense } from "@/types/expense";
 export const useExpenses = () => {
   const { startTimestamp, endTimestamp } = useMonth();
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
+  const [expensesCurrentMonth, setExpensesCurrentMonth] = useState<Expense[]>();
   const [expenses, setExpenses] = useState<Expense[]>();
   const [expensesError, setExpensesError] = useState<Error | null>(null);
 
@@ -22,7 +23,7 @@ export const useExpenses = () => {
       if (user) {
         const collectionRef = collection(db, "expenses");
 
-        const expensesQuery = query(
+        const expensesCurrentMonthQuery = query(
           collectionRef,
           where("date", ">=", startTimestamp),
           where("date", "<", endTimestamp),
@@ -30,8 +31,24 @@ export const useExpenses = () => {
           orderBy("date", "desc") // Sort by last created documents
         );
 
-        const unsubscribeSnapshot = onSnapshot(
-          expensesQuery,
+        const expensesQuery = query(
+          collectionRef,
+          where("userId", "==", user.uid),
+          orderBy("date", "desc") // Sort by last created documents
+        );
+
+        let currentMonthLoaded = false;
+        let expensesLoaded = false;
+
+        const checkLoading = () => {
+          if (currentMonthLoaded && expensesLoaded) {
+            setExpensesLoading(false);
+          }
+        };
+
+        // Expenses dokumenti jednog korisnika u toku trenutnog meseca
+        const unsubscribeCurrentMonth = onSnapshot(
+          expensesCurrentMonthQuery,
           snapshot => {
             const newData = snapshot.docs.map(doc => {
               const data = doc.data();
@@ -42,18 +59,48 @@ export const useExpenses = () => {
                 date: data.date?.toDate() || new Date()
               } as Expense;
             });
-            setExpenses(newData);
-            setExpensesLoading(false);
+
+            setExpensesCurrentMonth(newData);
+            currentMonthLoaded = true;
+            checkLoading();
           },
           error => {
             console.error(error);
-            setExpensesLoading(false);
             setExpensesError(error);
+            currentMonthLoaded = true;
+            checkLoading();
+          }
+        );
+
+        // Svi expenses dokumenti jednog korisnika
+        const unsubscribeExpenses = onSnapshot(
+          expensesQuery,
+          snapshot => {
+            const newData = snapshot.docs.map(doc => {
+              const data = doc.data();
+              return {
+                id: doc.id,
+                ...data,
+                date: data.date?.toDate() || new Date()
+              } as Expense;
+            });
+            setExpenses(newData);
+            expensesLoaded = true;
+            checkLoading();
+          },
+          error => {
+            console.error(error);
+            setExpensesError(error);
+            expensesLoaded = true;
+            checkLoading();
           }
         );
 
         // Clean up snapshot listener on component unmount
-        return () => unsubscribeSnapshot();
+        return () => {
+          unsubscribeCurrentMonth();
+          unsubscribeExpenses();
+        };
       } else {
         // Korisnik nije prijavljen
         console.error("User is not logged in");
@@ -65,5 +112,5 @@ export const useExpenses = () => {
     return () => unsubscribeAuth();
   }, []);
 
-  return { expenses, expensesLoading, expensesError };
+  return { expensesCurrentMonth, expenses, expensesLoading, expensesError };
 };

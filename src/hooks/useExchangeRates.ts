@@ -9,46 +9,46 @@ export const useExchangeRates = (currency: string) => {
   const [isExchangesLoading, setIsExchangesLoading] = useState<boolean>(true);
   const [errorExchanges, setErrorExchanges] = useState<Error | null>(null);
 
-  useEffect(() => {
-    // Get conversion rate data from API
-    const controller = new AbortController();
+  // useEffect(() => {
+  //   // Get conversion rate data from API
+  //   const controller = new AbortController();
 
-    const fetchData = async () => {
-      try {
-        setIsExchangesLoading(true);
-        setErrorExchanges(null);
-        const response = await fetch(
-          `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${currency}`,
-          { signal: controller.signal }
-        );
+  //   const fetchData = async () => {
+  //     try {
+  //       setIsExchangesLoading(true);
+  //       setErrorExchanges(null);
+  //       const response = await fetch(
+  //         `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${currency}`,
+  //         { signal: controller.signal }
+  //       );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //       const data = await response.json();
 
-        if (data.result !== "success") {
-          throw new Error(data);
-        }
+  //       if (data.result !== "success") {
+  //         throw new Error(data);
+  //       }
 
-        setExchangeRates(data.conversion_rates);
-      } catch (err) {
-        if (!controller.signal.aborted) {
-          setErrorExchanges(
-            err instanceof Error ? err : new Error("Unknown error")
-          );
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsExchangesLoading(false);
-        }
-      }
-    };
+  //       setExchangeRates(data.conversion_rates);
+  //     } catch (err) {
+  //       if (!controller.signal.aborted) {
+  //         setErrorExchanges(
+  //           err instanceof Error ? err : new Error("Unknown error")
+  //         );
+  //       }
+  //     } finally {
+  //       if (!controller.signal.aborted) {
+  //         setIsExchangesLoading(false);
+  //       }
+  //     }
+  //   };
 
-    fetchData();
+  //   fetchData();
 
-    return () => controller.abort();
-  }, [currency]);
+  //   return () => controller.abort();
+  // }, [currency]);
 
   return { exchangeRates, isExchangesLoading, errorExchanges };
 };

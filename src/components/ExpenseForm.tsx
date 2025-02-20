@@ -14,20 +14,24 @@ export default function ExpenseForm() {
     category: "other",
     currency: "EUR",
     date: new Date(),
-    userId: auth.currentUser?.uid
+    userId: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!auth.currentUser) {
-      console.error("User is not logged in");
+    const user = auth.currentUser;
+    if (!user) {
+      showToast("error", "User not logged in!");
       return;
     }
 
     // Add document ("expense") to Firebase "expenses" collection
     try {
-      await addDoc(collection(db, "expenses"), expense);
+      await addDoc(collection(db, "expenses"), {
+        ...expense,
+        userId: user.uid
+      });
 
       // Clear form after successful submission
       setExpense({
@@ -36,7 +40,7 @@ export default function ExpenseForm() {
         category: "other",
         currency: "EUR",
         date: new Date(),
-        userId: auth.currentUser?.uid
+        userId: user.uid
       });
       showToast("success", "Successfully Added");
     } catch (error) {

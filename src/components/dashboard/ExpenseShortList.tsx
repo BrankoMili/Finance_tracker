@@ -1,55 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SkeletonLoader from "./SkeletonLoader";
+import SkeletonLoader from "../SkeletonLoader";
 import { useMonth } from "@/hooks/useMonth";
-import { useExchangeRates } from "@/hooks/useExchangeRates";
-import { useExpenses } from "@/hooks/useExpenses";
-import { doc, getDoc } from "firebase/firestore";
-import { db, auth } from "@/lib/firebase";
 import { format } from "date-fns";
+import { Currency } from "@/types/currency";
+import { Expense } from "@/types/expense";
 
-export default function ExpenseShortList() {
-  const [monthSpendingAmount, setMonthSpendingAmount] = useState(0);
-  const { expenses, expensesLoading, expensesError } = useExpenses();
+interface Props {
+  userCurrency: Currency;
+  expensesCurrentMonth: Expense[] | undefined;
+  expensesLoading: boolean;
+  expensesError: Error | null;
+  exchangeRates: Record<string, number>;
+  isExchangesLoading: boolean;
+  errorExchanges: Error | null;
+}
+
+export default function ExpenseShortList({
+  userCurrency,
+  expensesCurrentMonth,
+  expensesLoading,
+  expensesError,
+  exchangeRates,
+  isExchangesLoading,
+  errorExchanges
+}: Props) {
+  const [monthSpendingAmount, setMonthSpendingAmount] = useState<number>(0);
   const { monthName } = useMonth();
-  const [userCurrency, setUserCurrency] = useState("EUR");
-  const { exchangeRates, isExchangesLoading, errorExchanges } =
-    useExchangeRates(userCurrency);
-
-  useEffect(() => {
-    const fetchUserCurrency = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          setUserCurrency(userDocSnap.data().currency);
-        }
-      } catch (error) {
-        console.error("Greška pri dobijanju valute:", error);
-      }
-    };
-
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) fetchUserCurrency();
-    });
-
-    return unsubscribe;
-  }, []);
 
   // sum of all expenses for this month
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
-    if (expenses?.length === 0 || expensesLoading || expensesError !== null)
+    // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (
+      expensesCurrentMonth?.length === 0 ||
+      expensesLoading ||
+      expensesError !== null
+    )
       return;
 
     let total = 0;
-    expenses?.forEach(expense => {
+    expensesCurrentMonth?.forEach(expense => {
       if (expense.currency === userCurrency) {
         total += expense.amount;
       } else {
@@ -58,7 +50,7 @@ export default function ExpenseShortList() {
     });
     setMonthSpendingAmount(total);
   }, [
-    expenses,
+    expensesCurrentMonth,
     exchangeRates,
     userCurrency,
     isExchangesLoading,
@@ -105,10 +97,10 @@ export default function ExpenseShortList() {
           </div>
 
           {/* Expense List */}
-          {(expenses || []).slice(0, 5).map(expense => (
+          {(expensesCurrentMonth || []).slice(0, 5).map(expense => (
             <div
               key={expense.id}
-              className="flex justify-between items-center text-sm pb-2 hover:bg-gray-50 rounded px-2"
+              className="flex justify-between items-center text-sm pb-2 rounded px-2"
             >
               <span className="w-1/4 text-textMain ">
                 {expense.description}
@@ -117,7 +109,7 @@ export default function ExpenseShortList() {
                 {expense.category}
               </span>
               <span className="w-1/4 text-textMain">
-                {expense.amount} {expense.currency}
+                {expense.amount.toFixed(2)} {expense.currency}
               </span>
               <span className="w-1/4 text-textMain">
                 {expense.date ? format(expense.date, "dd-MM-yyyy") : "N/A"}

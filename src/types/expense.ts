@@ -1,9 +1,11 @@
+import { Currency } from "./currency";
+
 export interface Expense {
   id?: string;
   amount: number;
   description: string;
-  category: "food" | "housing" | "transport" | "salary" | "other";
-  currency: "RSD" | "EUR" | "USD";
+  category: "food" | "housing" | "transport" | "other";
+  currency: Currency;
   date: Date;
   userId: string | undefined;
 }
