@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Currency } from "@/types/currency";
 import { Expense } from "@/types/expense";
+import { format } from "date-fns";
 
 interface Props {
   userCurrency: Currency;
-  expenses: Expense[] | undefined;
+  expensesSevenDays: Expense[] | undefined;
   expensesLoading: boolean;
   expensesError: Error | null;
   exchangeRates: Record<string, number>;
@@ -25,9 +26,19 @@ type SevenNumberArray = [
   number
 ];
 
+type SevenStringArray = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string
+];
+
 export default function Last7Days({
   userCurrency,
-  expenses,
+  expensesSevenDays,
   expensesLoading,
   expensesError,
   exchangeRates,
@@ -35,88 +46,97 @@ export default function Last7Days({
   errorExchanges
 }: Props) {
   const chartRef = useRef<HTMLCanvasElement>(null);
-  const [amountPerDay, setAmountPerDay] = useState<SevenNumberArray>([
-    0, 0, 0, 0, 0, 0, 0
-  ]);
+  const [amountPerDay, setAmountPerDay] = useState<
+    SevenNumberArray | undefined
+  >();
+  const [datesLabels, setDatesLabels] = useState<
+    SevenStringArray | undefined
+  >();
 
   // sum of all expenses last 7 days per day
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
     // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
-    if (expenses?.length === 0 || expensesLoading || expensesError !== null)
+
+    if (
+      expensesSevenDays?.length === 0 ||
+      expensesLoading ||
+      expensesError !== null
+    )
       return;
 
-    console.log(expenses);
+    // Upisivanje datuma od prethnodnih 7 dana u niz
+    const datesLabels = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const week = {
-      mon: 0,
-      tue: 0,
-      wed: 0,
-      thu: 0,
-      fri: 0,
-      sat: 0,
-      sun: 0
-    };
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
 
-    expenses?.forEach(expense => {
+    for (let i = 0; i < 7; i++) {
+      datesLabels.push(format(sevenDaysAgo, "dd-MM"));
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() + 1);
+    }
+
+    setDatesLabels(datesLabels as SevenStringArray);
+
+    // Upisivanje troskova od prethnodnih 7 dana u niz
+    const weekArr = [0, 0, 0, 0, 0, 0, 0];
+
+    expensesSevenDays?.forEach(expense => {
       if (expense.currency === userCurrency) {
-        if (expense.date.getDay() === 1) {
-          week.mon += expense.amount;
+        if (today.getDate() - 7 === expense.date.getDate()) {
+          weekArr[0] += expense.amount;
         }
-        if (expense.date.getDay() === 2) {
-          week.thu += expense.amount;
+        if (today.getDate() - 6 === expense.date.getDate()) {
+          weekArr[1] += expense.amount;
         }
-        if (expense.date.getDay() === 3) {
-          week.wed += expense.amount;
+        if (today.getDate() - 5 === expense.date.getDate()) {
+          weekArr[2] += expense.amount;
         }
-        if (expense.date.getDay() === 4) {
-          week.thu += expense.amount;
+        if (today.getDate() - 4 === expense.date.getDate()) {
+          weekArr[3] += expense.amount;
         }
-        if (expense.date.getDay() === 5) {
-          week.fri += expense.amount;
+        if (today.getDate() - 3 === expense.date.getDate()) {
+          weekArr[4] += expense.amount;
         }
-        if (expense.date.getDay() === 6) {
-          week.sat += expense.amount;
+        if (today.getDate() - 2 === expense.date.getDate()) {
+          weekArr[5] += expense.amount;
         }
-        if (expense.date.getDay() === 0) {
-          week.sun += expense.amount;
+        if (today.getDate() - 1 === expense.date.getDate()) {
+          weekArr[6] += expense.amount;
         }
       } else {
-        if (expense.date.getDay() === 1) {
-          week.mon += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 7 === expense.date.getDate()) {
+          weekArr[0] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 2) {
-          week.thu += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 6 === expense.date.getDate()) {
+          weekArr[1] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 3) {
-          week.wed += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 5 === expense.date.getDate()) {
+          weekArr[2] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 4) {
-          week.thu += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 4 === expense.date.getDate()) {
+          weekArr[3] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 5) {
-          week.fri += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 3 === expense.date.getDate()) {
+          weekArr[4] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 6) {
-          week.sat += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 2 === expense.date.getDate()) {
+          weekArr[5] += expense.amount / exchangeRates[expense.currency];
         }
-        if (expense.date.getDay() === 0) {
-          week.sun += expense.amount / exchangeRates[expense.currency];
+        if (today.getDate() - 1 === expense.date.getDate()) {
+          weekArr[6] += expense.amount / exchangeRates[expense.currency];
         }
       }
     });
 
-    setAmountPerDay([
-      parseFloat(week.mon.toFixed(2)),
-      parseFloat(week.tue.toFixed(2)),
-      parseFloat(week.wed.toFixed(2)),
-      parseFloat(week.thu.toFixed(2)),
-      parseFloat(week.fri.toFixed(2)),
-      parseFloat(week.sat.toFixed(2)),
-      parseFloat(week.sun.toFixed(2))
-    ]);
+    const weekArrTwoDecimals = weekArr.map(value => {
+      return parseFloat(value.toFixed(2));
+    });
+    setAmountPerDay(weekArrTwoDecimals as SevenNumberArray);
   }, [
-    expenses,
+    expensesSevenDays,
     exchangeRates,
     userCurrency,
     isExchangesLoading,
@@ -135,7 +155,7 @@ export default function Last7Days({
       const myChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          labels: datesLabels,
           datasets: [
             {
               label: "Expense",
@@ -189,7 +209,7 @@ export default function Last7Days({
             },
             tooltip: {
               callbacks: {
-                // Dodajemo valutu u tooltip
+                // Dodaje se valuta
                 label: function (context) {
                   return context.parsed.y + " " + userCurrency;
                 }
@@ -206,7 +226,12 @@ export default function Last7Days({
   return (
     <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
       <div className="mb-4">
-        <h3 className="font-bold text-textThird">Last 7 days</h3>
+        <h3
+          className="font-bold text-textThird"
+          onClick={() => console.log(datesLabels)}
+        >
+          Last 7 days
+        </h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
 

@@ -11,8 +11,12 @@ import { useExchangeRates } from "@/hooks/useExchangeRates";
 
 export default function Home() {
   const userCurrency = useUserCurrency(); // Valuta koju koristi korisnik
-  const { expensesCurrentMonth, expenses, expensesLoading, expensesError } =
-    useExpenses();
+  const {
+    expensesCurrentMonth,
+    expensesSevenDays,
+    expensesLoading,
+    expensesError
+  } = useExpenses();
   const { exchangeRates, isExchangesLoading, errorExchanges } =
     useExchangeRates(userCurrency);
 
@@ -33,7 +37,7 @@ export default function Home() {
             />
             <Last7Days
               userCurrency={userCurrency}
-              expenses={expenses}
+              expensesSevenDays={expensesSevenDays}
               expensesLoading={expensesLoading}
               expensesError={expensesError}
               exchangeRates={exchangeRates}
