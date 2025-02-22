@@ -7,7 +7,11 @@ import { signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { createUserProfile } from "@/services/userService";
 import { auth, provider } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification
+} from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
 export default function Signup() {
@@ -86,9 +90,12 @@ export default function Signup() {
       // Create user profile in database
       await createUserProfile(user);
 
+      await sendEmailVerification(user);
+
       setNotification({
         status: "success",
-        message: "You have successfully created an account."
+        message:
+          "Verification email sent! Please check your inbox to confirm your email address."
       });
 
       setFormData({

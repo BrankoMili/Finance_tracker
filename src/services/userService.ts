@@ -14,14 +14,12 @@ import { deleteObject, ref, listAll } from "firebase/storage";
 import { auth, provider } from "@/lib/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { signInWithPopup, User } from "firebase/auth";
+import { v4 as uuidv4 } from "uuid";
 
 // Napravi novi profil
 export const createUserProfile = async (user: User) => {
   const userRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(userRef);
-
-  const user1 = auth.currentUser;
-  console.log(user1);
 
   if (!docSnap.exists()) {
     await setDoc(userRef, {
@@ -30,7 +28,24 @@ export const createUserProfile = async (user: User) => {
       displayName: user.displayName,
       photoURL: user.photoURL,
       createdAt: new Date(),
-      currency: "EUR"
+      currency: "EUR",
+      categories: [
+        "Food",
+        "Housing",
+        "Transport",
+        "Health",
+        "Entertainment and Hobbies",
+        "Personal Care",
+        "Education",
+        "Travel",
+        "Family and Kids",
+        "Other"
+      ].map(item => {
+        return {
+          id: uuidv4(),
+          name: item
+        };
+      })
     });
   }
 };

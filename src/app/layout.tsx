@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { ToastProvider } from "@/components/ToastProvider";
 import AuthGuard from "@/components/AuthGuard";
 import LayoutWrapper from "./LayoutWrapper";
+import { TokenRefresher } from "@/components/TokenRefresher";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={`${inter.className} min-h-screen bg-background`}>
         <AuthGuard>
           <ToastProvider />
+          <TokenRefresher />
           <LayoutWrapper>{children}</LayoutWrapper>
         </AuthGuard>
       </body>

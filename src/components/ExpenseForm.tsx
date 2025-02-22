@@ -6,8 +6,13 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { auth } from "@/lib/firebase";
 import { showToast } from "@/utils/showToast";
+import { CategoryItem } from "@/types/categoryItem";
 
-export default function ExpenseForm() {
+interface Props {
+  userCategories: CategoryItem[] | undefined;
+}
+
+export default function ExpenseForm({ userCategories }: Props) {
   const [expense, setExpense] = useState<Expense>({
     amount: 0,
     description: "",
@@ -54,7 +59,10 @@ export default function ExpenseForm() {
       onSubmit={handleSubmit}
       className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto"
     >
-      <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
+      <h2
+        className="text-2xl font-bold text-textSecond mb-6 text-center"
+        onClick={() => console.log(userCategories)}
+      >
         Add Expense
       </h2>
 
@@ -128,10 +136,16 @@ export default function ExpenseForm() {
             })
           }
         >
-          <option value="food">Food</option>
-          <option value="housing">Housing</option>
-          <option value="transport">Transport</option>
-          <option value="other">Other</option>
+          {userCategories?.map(category => {
+            return (
+              <option
+                key={category.id}
+                value={category.name.toLocaleLowerCase()}
+              >
+                {category.name}
+              </option>
+            );
+          })}
         </select>
       </div>
 

@@ -4,11 +4,16 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { Currency } from "@/types/currency";
+import { CategoryItem } from "@/types/categoryItem";
 
-export const useUserCurrency = () => {
+export const useUserPreferences = () => {
   const [userCurrency, setUserCurrency] = useState<Currency>("EUR");
+  const [userCategories, setUserCategories] = useState<
+    CategoryItem[] | undefined
+  >();
+
   useEffect(() => {
-    const fetchUserCurrency = async () => {
+    const fetchUserPreferences = async () => {
       const user = auth.currentUser;
       if (!user) return;
 
@@ -18,18 +23,19 @@ export const useUserCurrency = () => {
 
         if (userDocSnap.exists()) {
           setUserCurrency(userDocSnap.data().currency);
+          setUserCategories(userDocSnap.data().categories);
         }
       } catch (error) {
-        console.error("Greška pri dobijanju valute:", error);
+        console.error("Greška pri dobijanju korisnickih podataka:", error);
       }
     };
 
     const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) fetchUserCurrency();
+      if (user) fetchUserPreferences();
     });
 
     return unsubscribe;
   }, []);
 
-  return userCurrency;
+  return { userCurrency, userCategories };
 };

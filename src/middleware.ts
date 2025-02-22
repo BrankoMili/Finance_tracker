@@ -33,10 +33,15 @@ export async function middleware(request: NextRequest) {
       const publicKey = await importX509(pem, "RS256");
 
       // verify the token
-      await jwtVerify(token, publicKey, {
+      const { payload } = await jwtVerify(token, publicKey, {
         audience: NEXT_PUBLIC_FIREBASE_PROJECT_ID,
         issuer: `https://securetoken.google.com/${NEXT_PUBLIC_FIREBASE_PROJECT_ID}`
       });
+
+      // Provera da li je email verifikovan
+      if (!payload.email_verified && path !== "/login" && path !== "/signup") {
+        return NextResponse.redirect(new URL("/verify-email", request.url));
+      }
     } catch (error) {
       console.error("Verifikacija tokena nije uspela:", error);
       const response = NextResponse.redirect(new URL("/login", request.url));

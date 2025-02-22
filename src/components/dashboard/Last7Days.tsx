@@ -226,12 +226,7 @@ export default function Last7Days({
   return (
     <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
       <div className="mb-4">
-        <h3
-          className="font-bold text-textThird"
-          onClick={() => console.log(datesLabels)}
-        >
-          Last 7 days
-        </h3>
+        <h3 className="font-bold text-textThird">Last 7 days</h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
 

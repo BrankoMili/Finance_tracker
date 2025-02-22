@@ -5,12 +5,12 @@ import ExpenseShortList from "@/components/dashboard/ExpenseShortList";
 import PendingExpenses from "@/components/dashboard/PendingExpenses";
 import Last7Days from "@/components/dashboard/Last7Days";
 import ExpensesCategories from "@/components/dashboard/ExpensesCategories";
-import { useUserCurrency } from "@/hooks/useUserCurrency";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 
 export default function Home() {
-  const userCurrency = useUserCurrency(); // Valuta koju koristi korisnik
+  const { userCurrency, userCategories } = useUserPreferences(); // Valuta i kategorije koje koristi korisnik
   const {
     expensesCurrentMonth,
     expensesSevenDays,
@@ -25,7 +25,7 @@ export default function Home() {
       <main className="ml-auto mr-auto rounded-tr-xl rounded-br-xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <ExpenseForm />
+            <ExpenseForm userCategories={userCategories} />
             <ExpenseShortList
               userCurrency={userCurrency}
               expensesCurrentMonth={expensesCurrentMonth}
@@ -52,6 +52,7 @@ export default function Home() {
               exchangeRates={exchangeRates}
               isExchangesLoading={isExchangesLoading}
               errorExchanges={errorExchanges}
+              userCategories={userCategories}
             />
             <PendingExpenses userCurrency={userCurrency} />
           </div>

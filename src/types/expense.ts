@@ -4,7 +4,7 @@ export interface Expense {
   id?: string;
   amount: number;
   description: string;
-  category: "food" | "housing" | "transport" | "other";
+  category: string;
   currency: Currency;
   date: Date;
   userId: string | undefined;
