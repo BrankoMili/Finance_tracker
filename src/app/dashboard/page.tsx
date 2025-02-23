@@ -21,45 +21,39 @@ export default function Home() {
     useExchangeRates(userCurrency);
 
   return (
-    <div>
-      <main className="ml-auto mr-auto rounded-tr-xl rounded-br-xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <ExpenseForm userCategories={userCategories} />
-            <ExpenseShortList
-              userCurrency={userCurrency}
-              expensesCurrentMonth={expensesCurrentMonth}
-              expensesLoading={expensesLoading}
-              expensesError={expensesError}
-              exchangeRates={exchangeRates}
-              isExchangesLoading={isExchangesLoading}
-              errorExchanges={errorExchanges}
-            />
-            <Last7Days
-              userCurrency={userCurrency}
-              expensesSevenDays={expensesSevenDays}
-              expensesLoading={expensesLoading}
-              expensesError={expensesError}
-              exchangeRates={exchangeRates}
-              isExchangesLoading={isExchangesLoading}
-              errorExchanges={errorExchanges}
-            />
-            <ExpensesCategories
-              userCurrency={userCurrency}
-              expensesCurrentMonth={expensesCurrentMonth}
-              expensesLoading={expensesLoading}
-              expensesError={expensesError}
-              exchangeRates={exchangeRates}
-              isExchangesLoading={isExchangesLoading}
-              errorExchanges={errorExchanges}
-              userCategories={userCategories}
-            />
-            <PendingExpenses userCurrency={userCurrency} />
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <ExpenseForm userCategories={userCategories} />
+      <ExpenseShortList
+        userCurrency={userCurrency}
+        expensesCurrentMonth={expensesCurrentMonth}
+        expensesLoading={expensesLoading}
+        expensesError={expensesError}
+        exchangeRates={exchangeRates}
+        isExchangesLoading={isExchangesLoading}
+        errorExchanges={errorExchanges}
+      />
+      <Last7Days
+        userCurrency={userCurrency}
+        expensesSevenDays={expensesSevenDays}
+        expensesLoading={expensesLoading}
+        expensesError={expensesError}
+        exchangeRates={exchangeRates}
+        isExchangesLoading={isExchangesLoading}
+        errorExchanges={errorExchanges}
+      />
+      <ExpensesCategories
+        userCurrency={userCurrency}
+        expensesCurrentMonth={expensesCurrentMonth}
+        expensesLoading={expensesLoading}
+        expensesError={expensesError}
+        exchangeRates={exchangeRates}
+        isExchangesLoading={isExchangesLoading}
+        errorExchanges={errorExchanges}
+        userCategories={userCategories}
+      />
+      <PendingExpenses userCurrency={userCurrency} />
 
-          <div className="lg:col-span-1"></div>
-        </div>
-      </main>
+      <div className="lg:col-span-1"></div>
     </div>
   );
 }

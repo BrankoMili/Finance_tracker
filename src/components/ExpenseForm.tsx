@@ -57,12 +57,9 @@ export default function ExpenseForm({ userCategories }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto"
+      className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full"
     >
-      <h2
-        className="text-2xl font-bold text-textSecond mb-6 text-center"
-        onClick={() => console.log(userCategories)}
-      >
+      <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
         Add Expense
       </h2>
 

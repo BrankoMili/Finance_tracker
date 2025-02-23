@@ -121,14 +121,16 @@ export default function ExpensesCategories({
   };
 
   return (
-    <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
+    <div className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full h-96">
       <div className="mb-4">
         <h3 className="font-bold text-textThird">
           Spending by categories ({monthName}) in {userCurrency}
         </h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
-      <Pie data={chartData} options={options} />
+      <div className="h-[calc(100%-2rem)] flex justify-center">
+        <Pie data={chartData} options={options} />
+      </div>
     </div>
   );
 }

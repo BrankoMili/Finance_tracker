@@ -224,13 +224,12 @@ export default function Last7Days({
   }, [userCurrency, amountPerDay]);
 
   return (
-    <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
+    <div className="relative bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col h-">
       <div className="mb-4">
         <h3 className="font-bold text-textThird">Last 7 days</h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
-
-      <div className="h-64">
+      <div className="flex-1" style={{ height: "calc(100% - 2rem)" }}>
         <canvas ref={chartRef}></canvas>
       </div>
     </div>

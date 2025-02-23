@@ -74,7 +74,7 @@ export default function ExpenseShortList({
   }
 
   return (
-    <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md mx-auto">
+    <div className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col">
       <div className="mb-4">
         <h3 className="font-bold text-textThird">
           Recent Expenses ({monthName})
@@ -89,7 +89,7 @@ export default function ExpenseShortList({
       ) : (
         <div className="space-y-4">
           {/* Header */}
-          <div className="flex justify-between text-sm font-semibold text-textSecond pb-2 border-b border-gray-200">
+          <div className="flex justify-between text-sm font-semibold text-textSecond pb-2 border-b border-gray-200 gap-5">
             <span className="w-1/4">Description</span>
             <span className="w-1/4">Category</span>
             <span className="w-1/4">Amount</span>
@@ -100,7 +100,7 @@ export default function ExpenseShortList({
           {(expensesCurrentMonth || []).slice(0, 5).map(expense => (
             <div
               key={expense.id}
-              className="flex justify-between items-center text-sm pb-2 rounded px-2"
+              className="flex justify-between items-center text-sm pb-2 rounded px-2 gap-5"
             >
               <span className="w-1/4 text-textMain ">
                 {expense.description}
@@ -116,18 +116,17 @@ export default function ExpenseShortList({
               </span>
             </div>
           ))}
-
-          {/* Monthly Summary */}
-          <div className="pt-4 mt-2 border-t border-gray-200">
-            <p className="text-center text-textSecond">
-              Monthly Total:{" "}
-              <span className="font-semibold">
-                {monthSpendingAmount.toFixed(2)} {userCurrency}
-              </span>
-            </p>
-          </div>
         </div>
       )}
+      {/* Monthly Summary */}
+      <div className="pt-4 border-t border-gray-200 mt-auto">
+        <p className="text-center text-textSecond">
+          Monthly Total:{" "}
+          <span className="font-semibold">
+            {monthSpendingAmount.toFixed(2)} {userCurrency}
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

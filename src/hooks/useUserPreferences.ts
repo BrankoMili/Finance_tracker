@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { Currency } from "@/types/currency";
 import { CategoryItem } from "@/types/categoryItem";
@@ -13,28 +13,33 @@ export const useUserPreferences = () => {
   >();
 
   useEffect(() => {
-    const fetchUserPreferences = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
+    const user = auth.currentUser;
+    if (!user) return;
 
-      try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          setUserCurrency(userDocSnap.data().currency);
-          setUserCategories(userDocSnap.data().categories);
+    const userDocRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(
+      userDocRef,
+      doc => {
+        try {
+          if (doc.exists()) {
+            const data = doc.data();
+            setUserCategories(data.categories || []);
+            setUserCurrency(data.currency || "EUR");
+          }
+        } catch (err) {
+          console.error("Error processing document:", err);
+          setUserCategories(undefined);
+          setUserCurrency("EUR");
         }
-      } catch (error) {
-        console.error("Greška pri dobijanju korisnickih podataka:", error);
+      },
+      err => {
+        console.error("Snapshot error:", err);
+        setUserCategories(undefined);
+        setUserCurrency("EUR");
       }
-    };
+    );
 
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) fetchUserPreferences();
-    });
-
-    return unsubscribe;
+    return () => unsubscribe();
   }, []);
 
   return { userCurrency, userCategories };

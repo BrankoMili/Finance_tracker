@@ -1,7 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { auth, db } from "@/lib/firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  updateDoc,
+  getDoc,
+  arrayUnion,
+  arrayRemove
+} from "firebase/firestore";
 import {
   updateProfile,
   EmailAuthProvider,
@@ -10,6 +16,9 @@ import {
 } from "firebase/auth";
 import { showToast } from "@/utils/showToast";
 import { Theme } from "@/types/theme";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { FaAngleRight, FaAngleDown } from "react-icons/fa";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Settings() {
   const [userCurrency, setUserCurrency] = useState("");
@@ -20,8 +29,10 @@ export default function Settings() {
   const [authProvider, setAuthProvider] = useState<
     "password" | "google" | null
   >(null);
-
   const [theme, setTheme] = useState<Theme>("light");
+  const [newCategory, setNewCategory] = useState("");
+  const { userCategories } = useUserPreferences();
+  const [showCategories, setShowCategories] = useState<boolean>(false);
 
   // Type guard for Firebase errors
   function isFirebaseError(error: unknown): error is { code: string } {
@@ -166,6 +177,71 @@ export default function Settings() {
     }
   };
 
+  const handleAddNewCategory = async () => {
+    const categoryToAdd = newCategory.trim();
+    if (!categoryToAdd) {
+      showToast("error", "Category name cannot be empty");
+      return;
+    }
+
+    if (
+      userCategories?.some(
+        cat => cat.name.toLowerCase() === categoryToAdd.toLowerCase()
+      )
+    ) {
+      showToast("error", "Category already exists");
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const newCategoryObj = {
+        id: uuidv4(),
+        name: categoryToAdd
+      };
+
+      await updateDoc(userDocRef, { categories: arrayUnion(newCategoryObj) });
+
+      setNewCategory("");
+      showToast("success", "Category successfully added");
+    } catch (error) {
+      console.error(error);
+      showToast("error", "Error adding category");
+    }
+  };
+
+  const deleteCategoryItem = async (categoryId: string) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+
+      // Find the category to delete from the current userCategories
+      const categoryToDelete = userCategories?.find(
+        cat => cat.id === categoryId
+      );
+
+      if (!categoryToDelete) {
+        showToast("error", "Category not found");
+        return;
+      }
+
+      // Remove the category object from Firestore array
+      await updateDoc(userDocRef, {
+        categories: arrayRemove(categoryToDelete)
+      });
+
+      showToast("success", "Category deleted successfully");
+    } catch (error) {
+      console.error(error);
+      showToast("error", "Error deleting category");
+    }
+  };
+
   return (
     <div>
       <div className="max-w-2xl mx-auto">
@@ -203,7 +279,6 @@ export default function Settings() {
               <option value="USD">US Dolar (USD)</option>
               <option value="RSD">Serbian dinar (RSD)</option>
             </select>
-
             <div className="mb-4">
               <p className="mt-6 text-xl font-semibold text-textSecond mb-4">
                 Theme
@@ -314,9 +389,71 @@ export default function Settings() {
                 </div>
               </div>
             )}
+            <div
+              className="mt-6 text-xl font-semibold text-textSecond mb-4 cursor-pointer block w-fit hover:text-textMain flex items-center"
+              onClick={() => setShowCategories(!showCategories)}
+            >
+              User's Categories
+              {showCategories ? (
+                <div>
+                  <FaAngleDown />{" "}
+                </div>
+              ) : (
+                <div>
+                  <FaAngleRight />
+                </div>
+              )}
+            </div>{" "}
+            {showCategories && (
+              <div className="mb-6">
+                <div className="mb-4">
+                  <label className="block text-textMain mb-2">
+                    Add new category
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
+                      placeholder="Enter category name"
+                      value={newCategory}
+                      onChange={e => setNewCategory(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="bg-secondary text-white px-4 py-2 rounded-md hover:bg-primary transition-colors"
+                      onClick={handleAddNewCategory}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-textMain font-medium mb-2">
+                    Current categories:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {userCategories?.map(category => (
+                      <div
+                        key={category.id}
+                        className="bg-background px-3 py-1 rounded-full text-sm"
+                      >
+                        <span className="text-textMain">{category.name} </span>
+                        <p
+                          className="text-textThird inline cursor-pointer"
+                          onClick={() => deleteCategoryItem(category.id)}
+                        >
+                          x
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
             <button
               type="submit"
-              className="bg-primary text-white mt-8 px-3 py-2 rounded-md"
+              className="bg-secondary text-white mt-8 px-3 py-2 rounded-md hover:bg-primary"
             >
               Save Changes
             </button>
