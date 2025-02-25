@@ -56,7 +56,7 @@ export default function Last7Days({
   // sum of all expenses last 7 days per day
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
 
     if (
       expensesSevenDays?.length === 0 ||
@@ -224,7 +224,7 @@ export default function Last7Days({
   }, [userCurrency, amountPerDay]);
 
   return (
-    <div className="relative bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col h-">
+    <div className="bg-componentsBackground sm:mt-3 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       <div className="mb-4">
         <h3 className="font-bold text-textThird">Last 7 days</h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>

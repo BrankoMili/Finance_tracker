@@ -15,7 +15,13 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-export default function Sidebar() {
+export default function Sidebar({
+  isOpen,
+  onClose
+}: {
+  isOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
 
   const navItems: NavItem[] = [
@@ -26,14 +32,43 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-componentsBackground border-r border-border fixed h-full">
+    <aside
+      className={`
+    fixed md:static inset-y-0 left-0 z-50
+    w-64 bg-componentsBackground border-r border-border
+    transform transition-transform duration-200 ease-in-out
+    h-screen overflow-y-auto
+    ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0 "}
+  `}
+    >
+      {/* Close button for mobile */}
+      <button
+        onClick={onClose}
+        className="md:hidden absolute right-4 top-4 p-2 rounded-lg hover:bg-hoverBg"
+      >
+        <svg
+          className="w-6 h-6 text-textSecond"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
       <div className="p-6">
         <Link href={"/"}>
-          <h2 className="text-2xl font-bold text-textSecond">Finance Track</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-textSecond">
+            Finance Track
+          </h2>
         </Link>
       </div>
 
-      <nav className="px-4 space-y-1">
+      <nav className="px-2 sm:px-4 space-y-1">
         {navItems.map(item => {
           return (
             <Link

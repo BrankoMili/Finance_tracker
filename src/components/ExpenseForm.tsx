@@ -7,6 +7,7 @@ import { db } from "@/lib/firebase";
 import { auth } from "@/lib/firebase";
 import { showToast } from "@/utils/showToast";
 import { CategoryItem } from "@/types/categoryItem";
+import { CURRENCIES } from "@/constants/currencies";
 
 interface Props {
   userCategories: CategoryItem[] | undefined;
@@ -45,7 +46,7 @@ export default function ExpenseForm({ userCategories }: Props) {
         category: "other",
         currency: "EUR",
         date: new Date(),
-        userId: user.uid
+        userId: ""
       });
       showToast("success", "Successfully Added");
     } catch (error) {
@@ -57,7 +58,7 @@ export default function ExpenseForm({ userCategories }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full"
+      className="bg-componentsBackground sm:mt-3 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full"
     >
       <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
         Add Expense
@@ -86,7 +87,7 @@ export default function ExpenseForm({ userCategories }: Props) {
           Currency
         </label>
         <select
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&>option]:text-sm [&>option]:p-1"
           value={expense.currency}
           onChange={e =>
             setExpense({
@@ -95,9 +96,11 @@ export default function ExpenseForm({ userCategories }: Props) {
             })
           }
         >
-          <option value="EUR">Euro (EUR)</option>
-          <option value="RSD">Serbian Dinar (RSD)</option>
-          <option value="USD">US Dolar (USD)</option>
+          {Object.entries(CURRENCIES).map(([code, name]) => (
+            <option key={code} value={code}>
+              {name} ({code})
+            </option>
+          ))}
         </select>
       </div>
 

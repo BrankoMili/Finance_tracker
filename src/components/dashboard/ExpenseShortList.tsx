@@ -32,7 +32,7 @@ export default function ExpenseShortList({
   // sum of all expenses for this month
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
     if (
       expensesCurrentMonth?.length === 0 ||
       expensesLoading ||
@@ -63,7 +63,7 @@ export default function ExpenseShortList({
   const errorMessage = expensesError?.message || errorExchanges?.message;
   if (errorMessage) {
     return (
-      <div className="bg-componentsBackground p-6 mt-10 rounded-xl shadow-lg max-w-md mx-auto">
+      <div className="bg-componentsBackground p-6 rounded-xl shadow-lg max-w-md mx-auto">
         <p className="font-semibold text-textThird">
           Recent Expenses ({monthName})
         </p>
@@ -74,7 +74,7 @@ export default function ExpenseShortList({
   }
 
   return (
-    <div className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full flex flex-col">
+    <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full mx-auto">
       <div className="mb-4">
         <h3 className="font-bold text-textThird">
           Recent Expenses ({monthName})

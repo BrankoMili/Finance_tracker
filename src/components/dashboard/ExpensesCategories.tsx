@@ -30,25 +30,21 @@ export default function ExpensesCategories({
   userCategories
 }: Props) {
   const { monthName } = useMonth();
-  const [amountPerCategory, setAmountPerCategory] = useState<Number[]>();
+  const [amountPerCategory, setAmountPerCategory] = useState<number[]>([]);
 
   useEffect(() => {
-    if (Object.keys(exchangeRates).length === 0) return;
-    // if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
-
     if (
-      expensesCurrentMonth?.length === 0 ||
       expensesLoading ||
       expensesError !== null ||
-      userCategories?.length === 0
+      !userCategories ||
+      userCategories.length === 0
     ) {
       return;
     }
 
-    const categories =
-      userCategories?.map(item => {
-        return item.name.toLowerCase();
-      }) || [];
+    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+
+    const categories = userCategories.map(item => item.name.toLowerCase());
     const amountByCategory = Array(categories.length).fill(0);
 
     expensesCurrentMonth?.forEach(expense => {
@@ -61,9 +57,9 @@ export default function ExpensesCategories({
       amountByCategory[index !== -1 ? index : categories.length - 1] += amount;
     });
 
-    const amountByCategoryTwoDecimals = amountByCategory.map(value => {
-      return parseFloat(value.toFixed(2));
-    });
+    const amountByCategoryTwoDecimals = amountByCategory.map(value =>
+      Number(value.toFixed(2))
+    );
     setAmountPerCategory(amountByCategoryTwoDecimals);
   }, [
     expensesCurrentMonth,
@@ -96,13 +92,20 @@ export default function ExpensesCategories({
     }
   };
 
+  // Create filtered data array
+  const filteredData =
+    userCategories
+      ?.map((category, index) => ({
+        name: category.name,
+        amount: amountPerCategory?.[index] || 0
+      }))
+      .filter(item => item.amount.valueOf() > 0) || [];
+
   const chartData = {
-    labels: userCategories?.map(item => {
-      return item.name;
-    }),
+    labels: filteredData.map(item => item.name),
     datasets: [
       {
-        data: amountPerCategory,
+        data: filteredData.map(item => item.amount),
         backgroundColor: [
           "#FF6384",
           "#FF9F40",
@@ -120,10 +123,23 @@ export default function ExpensesCategories({
     ]
   };
 
+  if (userCategories?.length === 0) {
+    return (
+      <div className="bg-componentsBackground p-6 rounded-xl">
+        <h3 className="text-textThird">
+          No categories found. Add categories to track expenses.
+        </h3>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 w-full h-96">
+    <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       <div className="mb-4">
-        <h3 className="font-bold text-textThird">
+        <h3
+          className="font-bold text-textThird"
+          onClick={() => console.log(amountPerCategory)}
+        >
           Spending by categories ({monthName}) in {userCurrency}
         </h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
@@ -9,6 +9,7 @@ import { Theme } from "@/types/theme";
 
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -27,13 +28,15 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64 ">
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col overflow-hidden">
         <div className="sticky top-0 z-10">
-          <Navbar />
+          <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
         </div>
-        <main className="p-8">{children}</main>
+        <main className="flex-1 p-4 sm:p-8 mt-16 md:mt-0 overflow-auto">
+          {children}
+        </main>
       </div>
     </div>
   );
