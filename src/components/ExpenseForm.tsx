@@ -36,6 +36,7 @@ export default function ExpenseForm({ userCategories }: Props) {
     try {
       await addDoc(collection(db, "expenses"), {
         ...expense,
+        date: new Date(),
         userId: user.uid
       });
 

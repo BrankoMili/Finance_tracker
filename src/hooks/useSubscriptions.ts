@@ -9,7 +9,6 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 import { Expense } from "@/types/expense";
-import { Subscription } from "@/types/subscription";
 
 export const useSubscriptions = () => {
   const [subscriptionsLoading, setSubscriptionsLoading] =
@@ -17,23 +16,23 @@ export const useSubscriptions = () => {
   const [subscriptionsError, setSubscriptionsError] = useState<Error | null>(
     null
   );
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>();
+  const [subscriptions, setSubscriptions] = useState<Expense[]>();
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, user => {
       if (user) {
         const collectionRef = collection(db, "subscriptions");
 
-        const expensesCurrentMonthQuery = query(
+        const sbuscribtionsQuery = query(
           collectionRef,
           where("userId", "==", user.uid),
-          orderBy("date", "desc") // Sort by last created documents
+          orderBy("date", "asc") // Sort by last created documents
         );
 
         setSubscriptionsLoading(true);
 
-        const unsubscribeCurrentMonth = onSnapshot(
-          expensesCurrentMonthQuery,
+        const unsubscribeSubscribtions = onSnapshot(
+          sbuscribtionsQuery,
           snapshot => {
             const newData = snapshot.docs.map(doc => {
               const data = doc.data();
@@ -57,7 +56,7 @@ export const useSubscriptions = () => {
 
         // Clean up snapshot listener on component unmount
         return () => {
-          unsubscribeCurrentMonth();
+          unsubscribeSubscribtions();
         };
       } else {
         // Korisnik nije prijavljen

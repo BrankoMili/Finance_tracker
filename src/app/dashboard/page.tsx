@@ -9,6 +9,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useExpenses } from "@/hooks/useExpenses";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
+import useDateTracker from "@/hooks/useDateTracker";
 
 export default function Home() {
   const { userCurrency, userCategories } = useUserPreferences(); // Valuta i kategorije koje koristi korisnik
@@ -22,6 +23,8 @@ export default function Home() {
     useExchangeRates(userCurrency);
   const { subscriptionsError, subscriptionsLoading, subscriptions } =
     useSubscriptions();
+
+  useDateTracker();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -67,6 +70,7 @@ export default function Home() {
           exchangeRates={exchangeRates}
           isExchangesLoading={isExchangesLoading}
           errorExchanges={errorExchanges}
+          userCategories={userCategories}
         />
         <a
           href="https://www.exchangerate-api.com"

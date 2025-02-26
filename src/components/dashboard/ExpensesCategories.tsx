@@ -145,7 +145,7 @@ export default function ExpensesCategories({
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
       <div className="h-[calc(100%-2rem)] flex justify-center">
-        <Pie data={chartData} options={options} />
+        <Pie data={chartData} options={options} className="max-w-80 max-h-80" />
       </div>
     </div>
   );

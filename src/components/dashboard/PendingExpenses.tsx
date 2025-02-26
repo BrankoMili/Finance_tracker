@@ -3,22 +3,24 @@
 import SkeletonLoader from "../SkeletonLoader";
 import { useState, useEffect } from "react";
 import { Currency } from "@/types/currency";
-import { Subscription } from "@/types/subscription";
 import { collection, addDoc } from "firebase/firestore";
 import { showToast } from "@/utils/showToast";
 import { auth } from "@/lib/firebase";
 import { db } from "@/lib/firebase";
 import { format } from "date-fns";
 import { CURRENCIES } from "@/constants/currencies";
+import { CategoryItem } from "@/types/categoryItem";
+import { Expense } from "@/types/expense";
 
 interface Props {
   userCurrency: Currency;
   subscriptionsError: Error | null;
   subscriptionsLoading: boolean;
-  subscriptions: Subscription[] | undefined;
+  subscriptions: Expense[] | undefined;
   exchangeRates: Record<string, number>;
   errorExchanges: Error | null;
   isExchangesLoading: boolean;
+  userCategories: CategoryItem[] | undefined;
 }
 
 export default function PendingExpenses({
@@ -28,14 +30,16 @@ export default function PendingExpenses({
   subscriptions,
   exchangeRates,
   errorExchanges,
-  isExchangesLoading
+  isExchangesLoading,
+  userCategories
 }: Props) {
   const [showSubscriptionForm, setShowSubscriptionForm] =
     useState<boolean>(false);
 
-  const [subscription, setSubscription] = useState<Subscription>({
+  const [subscription, setSubscription] = useState<Expense>({
     amount: 0,
     description: "",
+    category: "other",
     currency: "EUR",
     date: new Date(),
     userId: ""
@@ -62,6 +66,7 @@ export default function PendingExpenses({
       setSubscription({
         amount: 0,
         description: "",
+        category: "other",
         currency: "EUR",
         date: new Date(),
         userId: ""
@@ -159,7 +164,7 @@ export default function PendingExpenses({
               onChange={e =>
                 setSubscription({
                   ...subscription,
-                  currency: e.target.value as Subscription["currency"]
+                  currency: e.target.value as Expense["currency"]
                 })
               }
             >
@@ -189,6 +194,34 @@ export default function PendingExpenses({
               }
               required
             />
+          </div>
+
+          {/* Category Select */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-textSecond mb-1">
+              Category
+            </label>
+            <select
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              value={subscription.category}
+              onChange={e =>
+                setSubscription({
+                  ...subscription,
+                  category: e.target.value as Expense["category"]
+                })
+              }
+            >
+              {userCategories?.map(category => {
+                return (
+                  <option
+                    key={category.id}
+                    value={category.name.toLocaleLowerCase()}
+                  >
+                    {category.name}
+                  </option>
+                );
+              })}
+            </select>
           </div>
 
           {/* Date Input */}

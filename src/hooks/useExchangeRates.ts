@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 type CacheEntry = {
   rates: Record<string, number>;
@@ -14,7 +14,6 @@ export const useExchangeRates = (currency: string) => {
   );
   const [isExchangesLoading, setIsExchangesLoading] = useState<boolean>(true);
   const [errorExchanges, setErrorExchanges] = useState<Error | null>(null);
-  const controllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const checkCache = () => {
@@ -29,7 +28,7 @@ export const useExchangeRates = (currency: string) => {
 
     if (checkCache()) return;
 
-    controllerRef.current = new AbortController();
+    const controller = new AbortController();
     const fetchData = async () => {
       try {
         setIsExchangesLoading(true);
@@ -37,7 +36,7 @@ export const useExchangeRates = (currency: string) => {
 
         const response = await fetch(
           `https://api.exchangerate-api.com/v4/latest/${currency}`,
-          { signal: controllerRef.current!.signal }
+          { signal: controller.signal }
         );
 
         if (!response.ok) throw new Error(`Status: ${response.status}`);
@@ -52,13 +51,13 @@ export const useExchangeRates = (currency: string) => {
 
         setExchangeRates(data.rates);
       } catch (err) {
-        if (!controllerRef.current?.signal.aborted) {
+        if (!controller.signal.aborted) {
           setErrorExchanges(
-            err instanceof Error ? err : new Error("An error occured")
+            err instanceof Error ? err : new Error("An error occurred")
           );
         }
       } finally {
-        if (!controllerRef.current?.signal.aborted) {
+        if (!controller.signal.aborted) {
           setIsExchangesLoading(false);
         }
       }
@@ -67,7 +66,7 @@ export const useExchangeRates = (currency: string) => {
     fetchData();
 
     return () => {
-      controllerRef.current?.abort();
+      controller.abort();
     };
   }, [currency]);
 
