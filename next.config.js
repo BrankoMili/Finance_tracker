@@ -1,8 +1,21 @@
-module.exports = {
+const nextConfig = {
   images: {
     domains: [
-      "lh3.googleusercontent.com", // Google user content domain
-      "firebasestorage.googleapis.com" // Firebase Storage domain
+      "res.cloudinary.com",
+      "lh3.googleusercontent.com" // Додајте овај домен
+    ],
+    // Или за Next.js 13+:
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com"
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com"
+      }
     ]
   }
 };
+
+module.exports = nextConfig;

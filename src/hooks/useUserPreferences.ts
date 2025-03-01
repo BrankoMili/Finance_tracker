@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
-import { Currency } from "@/types/currency";
 import { CategoryItem } from "@/types/categoryItem";
 
 export const useUserPreferences = () => {
-  const [userCurrency, setUserCurrency] = useState<Currency>("EUR");
+  const [userCurrency, setUserCurrency] = useState("");
   const [userCategories, setUserCategories] = useState<CategoryItem[]>([]);
 
   useEffect(() => {

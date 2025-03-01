@@ -19,6 +19,7 @@ import { Theme } from "@/types/theme";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
+import { CURRENCIES } from "@/constants/currencies";
 
 export default function Settings() {
   const [userCurrency, setUserCurrency] = useState("");
@@ -269,15 +270,15 @@ export default function Settings() {
             </p>
             <p className="mt-3 text-textMain">Currency</p>
             <select
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&>option]:text-sm [&>option]:p-1"
               value={userCurrency}
-              onChange={e => {
-                setUserCurrency(e.target.value);
-              }}
-              className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
+              onChange={e => setUserCurrency(e.target.value)}
             >
-              <option value="EUR">Euro (EUR)</option>
-              <option value="USD">US Dolar (USD)</option>
-              <option value="RSD">Serbian dinar (RSD)</option>
+              {Object.entries(CURRENCIES).map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name} ({code})
+                </option>
+              ))}
             </select>
             <div className="mb-4">
               <p className="mt-6 text-xl font-semibold text-textSecond mb-4">

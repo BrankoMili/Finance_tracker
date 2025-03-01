@@ -122,7 +122,7 @@ export default function PendingExpenses({
       {showSubscriptionForm && (
         <form
           onSubmit={handleForm}
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto  bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
           <p
             className="absolute top-2 right-4 font-bold text-textSecond cursor-pointer text-lg hover:text-textMain"
@@ -268,11 +268,13 @@ export default function PendingExpenses({
                 className="flex justify-between items-center text-sm pb-2 rounded px-2"
                 key={item.id}
               >
-                <span className="w-1/4 text-textMain">{item.description}</span>
-                <span className="w-1/4 text-textMain">
+                <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
+                  {item.description}
+                </span>
+                <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                   {item.amount.toFixed(2)} {item.currency}
                 </span>
-                <span className="w-1/4 text-textMain">
+                <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                   {item.date ? format(item.date, "dd-MM-yyyy") : "N/A"}
                 </span>
               </div>

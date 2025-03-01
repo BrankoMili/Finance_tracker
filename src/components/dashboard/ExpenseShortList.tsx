@@ -102,16 +102,16 @@ export default function ExpenseShortList({
               key={expense.id}
               className="flex justify-between items-center text-sm pb-2 rounded px-2 gap-5"
             >
-              <span className="w-1/4 text-textMain ">
+              <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                 {expense.description}
               </span>
-              <span className="w-1/4 capitalize text-textMain">
+              <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                 {expense.category}
               </span>
-              <span className="w-1/4 text-textMain">
+              <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                 {expense.amount.toFixed(2)} {expense.currency}
               </span>
-              <span className="w-1/4 text-textMain">
+              <span className="w-1/4 overflow-hidden text-ellipsis pr-2 text-textMain">
                 {expense.date ? format(expense.date, "dd-MM-yyyy") : "N/A"}
               </span>
             </div>

@@ -11,8 +11,18 @@ import {
 import { useMonth } from "./useMonth";
 import { db, auth } from "@/lib/firebase";
 import { Expense } from "@/types/expense";
+import { Filters } from "@/types/filters";
 
-export const useExpenses = () => {
+const defaultFilters: Filters = {
+  category: "",
+  minAmount: 0,
+  maxAmount: 0,
+  startDate: null,
+  endDate: null,
+  currency: ""
+};
+
+export const useExpenses = (appliedFilters: Filters = defaultFilters) => {
   const { startTimestamp, endTimestamp } = useMonth();
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
   const [expenses, setExpenses] = useState<Expense[]>();
@@ -25,11 +35,56 @@ export const useExpenses = () => {
       if (user) {
         const collectionRef = collection(db, "expenses");
 
-        const expensesQuery = query(
-          collectionRef,
+        const queryConditions = [
           where("userId", "==", user.uid),
-          orderBy("date", "desc") // Sort by last created documents
-        );
+          orderBy("date", "desc")
+        ];
+
+        if (appliedFilters) {
+          // Apply category filter
+          if (appliedFilters.category) {
+            queryConditions.push(
+              where("category", "==", appliedFilters.category)
+            );
+          }
+
+          // Apply currency filter
+          if (appliedFilters.currency) {
+            queryConditions.push(
+              where("currency", "==", appliedFilters.currency)
+            );
+          }
+
+          // Apply amount range filters
+          if (appliedFilters.minAmount > 0) {
+            queryConditions.push(
+              where("amount", ">=", appliedFilters.minAmount)
+            );
+          }
+          if (appliedFilters.maxAmount > 0) {
+            queryConditions.push(
+              where("amount", "<=", appliedFilters.maxAmount)
+            );
+          }
+
+          // Apply date range filters
+          if (appliedFilters.startDate) {
+            const startDate = new Date(appliedFilters.startDate);
+            startDate.setHours(0, 0, 0, 0);
+            queryConditions.push(
+              where("date", ">=", Timestamp.fromDate(startDate))
+            );
+          }
+          if (appliedFilters.endDate) {
+            const endDate = new Date(appliedFilters.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            queryConditions.push(
+              where("date", "<=", Timestamp.fromDate(endDate))
+            );
+          }
+        }
+
+        const expensesQuery = query(collectionRef, ...queryConditions);
 
         const expensesCurrentMonthQuery = query(
           collectionRef,
@@ -157,7 +212,7 @@ export const useExpenses = () => {
 
     // Clean up auth listener on component unmount
     return () => unsubscribeAuth();
-  }, []);
+  }, [appliedFilters]);
 
   return {
     expenses,

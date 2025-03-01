@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Currency } from "@/types/currency";
 import { Expense } from "@/types/expense";
-import { format } from "date-fns";
+import { format, subDays, isSameDay } from "date-fns";
 
 interface Props {
   userCurrency: Currency;
@@ -65,68 +65,33 @@ export default function Last7Days({
     )
       return;
 
-    // Upisivanje datuma od prethnodnih 7 dana u niz
-    const datesLabels = [];
+    const datesLabels: string[] = [];
+    const dateObjects: Date[] = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
-
-    for (let i = 0; i < 7; i++) {
-      datesLabels.push(format(sevenDaysAgo, "dd-MM"));
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() + 1);
+    for (let i = 6; i >= 0; i--) {
+      const date = subDays(today, i + 1);
+      dateObjects.push(date);
+      datesLabels.push(format(date, "dd-MM"));
     }
 
     setDatesLabels(datesLabels as SevenStringArray);
 
-    // Upisivanje troskova od prethnodnih 7 dana u niz
     const weekArr = [0, 0, 0, 0, 0, 0, 0];
 
     expensesSevenDays?.forEach(expense => {
-      if (expense.currency === userCurrency) {
-        if (today.getDate() - 7 === expense.date.getDate()) {
-          weekArr[0] += expense.amount;
-        }
-        if (today.getDate() - 6 === expense.date.getDate()) {
-          weekArr[1] += expense.amount;
-        }
-        if (today.getDate() - 5 === expense.date.getDate()) {
-          weekArr[2] += expense.amount;
-        }
-        if (today.getDate() - 4 === expense.date.getDate()) {
-          weekArr[3] += expense.amount;
-        }
-        if (today.getDate() - 3 === expense.date.getDate()) {
-          weekArr[4] += expense.amount;
-        }
-        if (today.getDate() - 2 === expense.date.getDate()) {
-          weekArr[5] += expense.amount;
-        }
-        if (today.getDate() - 1 === expense.date.getDate()) {
-          weekArr[6] += expense.amount;
-        }
-      } else {
-        if (today.getDate() - 7 === expense.date.getDate()) {
-          weekArr[0] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 6 === expense.date.getDate()) {
-          weekArr[1] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 5 === expense.date.getDate()) {
-          weekArr[2] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 4 === expense.date.getDate()) {
-          weekArr[3] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 3 === expense.date.getDate()) {
-          weekArr[4] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 2 === expense.date.getDate()) {
-          weekArr[5] += expense.amount / exchangeRates[expense.currency];
-        }
-        if (today.getDate() - 1 === expense.date.getDate()) {
-          weekArr[6] += expense.amount / exchangeRates[expense.currency];
+      const expenseDate = new Date(expense.date);
+      expenseDate.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 7; i++) {
+        if (isSameDay(dateObjects[i], expenseDate)) {
+          if (expense.currency === userCurrency) {
+            weekArr[i] += expense.amount;
+          } else {
+            weekArr[i] += expense.amount / exchangeRates[expense.currency];
+          }
+          break;
         }
       }
     });
@@ -224,9 +189,14 @@ export default function Last7Days({
   }, [userCurrency, amountPerDay]);
 
   return (
-    <div className="bg-componentsBackground sm:mt-3 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
+    <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       <div className="mb-4">
-        <h3 className="font-bold text-textThird">Last 7 days</h3>
+        <h3
+          className="font-bold text-textThird"
+          onClick={() => console.log(amountPerDay)}
+        >
+          Last 7 days
+        </h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
       <div className="flex-1" style={{ height: "calc(100% - 2rem)" }}>

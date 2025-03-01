@@ -28,7 +28,7 @@ export default function Home() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="space-y-5 sm:space-y-8">
+      <div className="space-y-8">
         <ExpenseForm userCategories={userCategories} />
         <ExpenseShortList
           userCurrency={userCurrency}

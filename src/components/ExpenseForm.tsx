@@ -59,7 +59,7 @@ export default function ExpenseForm({ userCategories }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-componentsBackground sm:mt-3 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full"
+      className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full"
     >
       <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
         Add Expense

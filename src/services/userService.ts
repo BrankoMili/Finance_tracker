@@ -1,4 +1,4 @@
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import {
   doc,
   deleteDoc,
@@ -10,7 +10,6 @@ import {
   setDoc,
   getDocs
 } from "firebase/firestore";
-import { deleteObject, ref, listAll } from "firebase/storage";
 import { auth, provider } from "@/lib/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 import { signInWithPopup, User } from "firebase/auth";
@@ -94,12 +93,6 @@ export const deleteUserAccount = async (password?: string) => {
     // Delete user document from collection users
     const userDocRef = doc(db, "users", user.uid);
     await deleteDoc(userDocRef);
-
-    // Delete profile pictures
-    const storageRef = ref(storage, `profilePictures/${user.uid}`);
-    const listResult = await listAll(storageRef);
-
-    await Promise.all(listResult.items.map(itemRef => deleteObject(itemRef)));
 
     await user.delete();
 

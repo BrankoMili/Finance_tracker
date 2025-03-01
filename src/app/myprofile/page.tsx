@@ -4,14 +4,6 @@ import { auth } from "@/lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import LogoutButton from "@/components/LogoutButton";
 import { updateProfile } from "firebase/auth";
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-  listAll,
-  deleteObject
-} from "firebase/storage";
 import { useState } from "react";
 import { deleteUserAccount } from "@/services/userService";
 import { useRouter } from "next/navigation";
@@ -21,7 +13,6 @@ export default function MyProfile() {
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
   const [uploading, setUploading] = useState(false);
-  const storage = getStorage();
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -75,30 +66,44 @@ export default function MyProfile() {
     try {
       setUploading(true);
 
-      // Delete all files of user in storage
-      const userFolderRef = storageRef(storage, `profilePictures/${user.uid}`);
-      const listResult = await listAll(userFolderRef);
-
-      await Promise.all(listResult.items.map(item => deleteObject(item)));
-
-      const fileRef = storageRef(
-        storage,
-        `profilePictures/${user.uid}/${Date.now()}_${file.name}`
+      // 1. Припрема за Cloudinary Upload
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
       );
 
-      const snapshot = await uploadBytes(fileRef, file);
+      // 2. Подешавање Asset Folder структуре
+      const userFolder = `finance-tracker/profile-pictures/${user.uid}`;
+      formData.append("folder", userFolder);
 
-      const downloadURL = await getDownloadURL(snapshot.ref);
+      // 3. Форсирање јединственог public_id
+      const publicId = `profile_${Date.now()}`;
+      formData.append("public_id", publicId);
 
-      await updateProfile(user, {
-        photoURL: downloadURL
-      });
+      // 4. Слање захтева
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData }
+      );
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || "Upload failed");
+
+      await updateProfile(user, { photoURL: data.secure_url });
     } catch (error) {
       console.error("Upload error:", error);
       alert("An error occurred while changing the image");
     } finally {
       setUploading(false);
     }
+  };
+
+  // 6. Генерисање оптимизованог URL-а
+  const getOptimizedImageUrl = (url: string) => {
+    if (!url.includes("cloudinary.com")) return url;
+    return url.replace("/upload/", "/upload/c_fill,w_128,h_128,q_auto,f_auto/");
   };
 
   return user ? (
@@ -108,13 +113,22 @@ export default function MyProfile() {
           {/* Left Profile Section */}
           <div className="md:w-1/3 bg-primary/15 p-8 flex flex-col items-center space-y-6">
             <div>
-              <Image
-                src={user.photoURL || "/assets/images/userIcon.svg"}
-                alt="Profile"
-                width={128}
-                height={128}
-                className="w-32 h-32 rounded-full border-4 border-border shadow-lg"
-              />
+              <div className="w-32 h-32 mx-auto relative">
+                <Image
+                  src={
+                    user.photoURL
+                      ? getOptimizedImageUrl(user.photoURL)
+                      : "/assets/images/userIcon.svg"
+                  }
+                  alt="Profile"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 128px"
+                  style={{
+                    objectFit: "cover"
+                  }}
+                  className="rounded-full border-4 border-border shadow-lg"
+                />
+              </div>
 
               <label
                 className={`mt-5 inline-block bg-primary text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-secondary transition-colors shadow-md cursor-pointer ${
@@ -162,7 +176,7 @@ export default function MyProfile() {
           </div>
 
           {/* Right Content Section */}
-          <div className="md:w-2/3 p-8 space-y-6 bg-componentsBackground">
+          <div className="w-full p-4 md:w-2/3 md:p-8 space-y-6 bg-componentsBackground">
             <div>
               <h2 className="text-2xl font-bold text-textSecond mb-2">
                 My Profile
@@ -173,7 +187,7 @@ export default function MyProfile() {
             <div className="space-y-4">
               <div className="bg-primary/10 p-4 rounded-lg">
                 <p className="text-sm text-primary font-semibold mb-1">Name</p>
-                <p className="text-textSecond font-medium">
+                <p className="text-textSecond font-medium break-words">
                   {user.displayName}
                 </p>
               </div>
@@ -182,12 +196,14 @@ export default function MyProfile() {
                 <p className="text-sm text-primary font-semibold mb-1">
                   Email Address
                 </p>
-                <p className="text-textSecond font-medium">{user.email}</p>
+                <p className="text-textSecond font-medium break-words">
+                  {user.email}
+                </p>
               </div>
 
               {user.providerData[0].providerId === "google.com" && (
                 <div className="bg-primary/10 p-4 rounded-lg">
-                  <p className="text-sm text-primary font-semibold mb-2">
+                  <p className="text-sm text-primary font-semibold mb-2 break-words">
                     Connected Social Account
                   </p>
                   <div className="flex items-center space-x-3">
@@ -198,7 +214,7 @@ export default function MyProfile() {
                       height={32}
                       className="w-8 h-8"
                     />
-                    <span className="text-textSecond font-medium">
+                    <span className="text-textSecond font-medium break-words">
                       Google Account
                     </span>
                   </div>

@@ -72,6 +72,7 @@ export default function Sidebar({
         {navItems.map(item => {
           return (
             <Link
+              onClick={onClose}
               key={item.href}
               href={item.href}
               className={`flex items-center px-4 py-3 rounded-xl transition-colors ${
