@@ -100,12 +100,6 @@ export default function MyProfile() {
     }
   };
 
-  // 6. Генерисање оптимизованог URL-а
-  const getOptimizedImageUrl = (url: string) => {
-    if (!url.includes("cloudinary.com")) return url;
-    return url.replace("/upload/", "/upload/c_fill,w_128,h_128,q_auto,f_auto/");
-  };
-
   return user ? (
     <div className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
@@ -117,7 +111,7 @@ export default function MyProfile() {
                 <Image
                   src={
                     user.photoURL
-                      ? getOptimizedImageUrl(user.photoURL)
+                      ? user.photoURL
                       : "/assets/images/userIcon.svg"
                   }
                   alt="Profile"
@@ -181,7 +175,12 @@ export default function MyProfile() {
               <h2 className="text-2xl font-bold text-textSecond mb-2">
                 My Profile
               </h2>
-              <p className="text-textThird">Manage your profile information</p>
+              <p
+                className="text-textThird"
+                onClick={() => console.log(user.photoURL)}
+              >
+                Manage your profile information
+              </p>
             </div>
 
             <div className="space-y-4">

@@ -3,12 +3,19 @@
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { onIdTokenChanged } from "firebase/auth";
+import { AccountDeletionState } from "@/services/accountDeletionState"; // Adjust path as needed
 
 export function TokenRefresher() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onIdTokenChanged(auth, async user => {
+      // Skip token refresh if account deletion is in progress
+      if (AccountDeletionState.isDeletionInProgress()) {
+        console.log("Account deletion in progress, skipping token refresh");
+        return;
+      }
+
       if (user) {
         try {
           setIsRefreshing(true);
@@ -29,17 +36,24 @@ export function TokenRefresher() {
     });
 
     const intervalId = setInterval(async () => {
+      // Skip scheduled refresh if account deletion is in progress
+      if (AccountDeletionState.isDeletionInProgress()) {
+        console.log("Account deletion in progress, skipping scheduled refresh");
+        return;
+      }
+
       const currentUser = auth.currentUser;
       if (currentUser && !isRefreshing) {
         try {
           setIsRefreshing(true);
           await currentUser.getIdToken(true);
         } catch (error) {
-          console.error("Error with token refresh:", error);
+          console.error("Error with scheduled token refresh:", error);
+        } finally {
           setIsRefreshing(false);
         }
       }
-    }, 30 * 60 * 1000); // 30 minuta
+    }, 30 * 60 * 1000); // 30 minutes
 
     return () => {
       unsubscribe();

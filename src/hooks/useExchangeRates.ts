@@ -35,7 +35,7 @@ export const useExchangeRates = (currency: string) => {
         setErrorExchanges(null);
 
         const response = await fetch(
-          `https://api.exchangerate-api.com/v4/latest/${currency}`,
+          `https://open.er-api.com/v6/latest/${currency}`,
           { signal: controller.signal }
         );
 

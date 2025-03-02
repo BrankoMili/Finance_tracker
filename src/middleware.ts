@@ -8,6 +8,14 @@ export async function middleware(request: NextRequest) {
   const NEXT_PUBLIC_FIREBASE_PROJECT_ID =
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
+  // Allow api routes
+  if (path.startsWith("/api")) {
+    if (request.method !== "POST") {
+      return new NextResponse("Method Not Allowed", { status: 405 });
+    }
+    return NextResponse.next();
+  }
+
   // If there is no token and the user is not on /login, redirect to /login
   if (!token && path !== "/login" && path !== "/signup") {
     return NextResponse.redirect(new URL("/login", request.url));

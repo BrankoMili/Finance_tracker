@@ -11,11 +11,15 @@ import {
   getDocs
 } from "firebase/firestore";
 import { auth, provider } from "@/lib/firebase";
-import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { signInWithPopup, User } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  User
+} from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
+import { AccountDeletionState } from "@/services/accountDeletionState";
 
-// Napravi novi profil
 export const createUserProfile = async (user: User) => {
   const userRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(userRef);
@@ -49,21 +53,40 @@ export const createUserProfile = async (user: User) => {
   }
 };
 
+const deleteCloudinaryUserImages = async (userId: string) => {
+  try {
+    const response = await fetch("/api/deleteCloudinaryImages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    const data = await response.json();
+    console.log("API response:", data); // Ispisuje odgovor API rute
+
+    if (!response.ok) {
+      throw new Error(data.message || "Greška pri brisanju slika");
+    }
+  } catch (error) {
+    console.error("Detalji greške:", error); // Detaljna greška
+    throw new Error("Došlo je do greške pri brisanju slika");
+  }
+};
+
 export const deleteUserAccount = async (password?: string) => {
   const user = auth.currentUser;
   if (!user) throw new Error("User not authenticated");
 
   try {
-    // Provera poslednje autentifikacije
-    const lastSignIn = user.metadata.lastSignInTime;
-    const creationTime = user.metadata.creationTime;
-    const lastLogin = new Date(lastSignIn || creationTime || 0).getTime();
-    const fiveMinutesAgo = Date.now() - 300000;
+    // Set the flag to prevent token refreshing during account deletion
+    AccountDeletionState.startDeletion();
 
-    if (lastLogin < fiveMinutesAgo) {
-      // Handle different auth providers
-      const mainProvider = user.providerData[0]?.providerId;
+    // Your existing re-authentication code...
+    const mainProvider = user.providerData[0]?.providerId;
 
+    try {
       if (mainProvider === "password" && password) {
         const email = user.email;
         if (!email) throw new Error("Email not available");
@@ -71,10 +94,18 @@ export const deleteUserAccount = async (password?: string) => {
         const credential = EmailAuthProvider.credential(email, password);
         await reauthenticateWithCredential(user, credential);
       } else if (mainProvider === "google.com") {
-        await signInWithPopup(auth, provider);
+        await reauthenticateWithPopup(user, provider);
       } else {
-        throw new Error("Recent login required for this provider");
+        throw new Error(`Recent login required for provider: ${mainProvider}`);
       }
+    } catch (error: unknown) {
+      // Reset the flag if re-authentication fails
+      AccountDeletionState.endDeletion();
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Unknown error during re-authentication";
+      throw new Error(`Re-authentication failed: ${errorMessage}`);
     }
 
     // Delete all expenses from the user
@@ -90,16 +121,25 @@ export const deleteUserAccount = async (password?: string) => {
     });
     await batch.commit();
 
-    // Delete user document from collection users
+    // Delete user document
     const userDocRef = doc(db, "users", user.uid);
     await deleteDoc(userDocRef);
 
+    // Delete user images from Cloudinary
+    await deleteCloudinaryUserImages(user.uid);
+
+    // Delete the user account
     await user.delete();
 
     // Delete session cookie
     document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  } catch (error) {
+
+    return { success: true, message: "Account deleted successfully" };
+  } catch (error: unknown) {
     console.error("Error deleting account:", error);
     throw error;
+  } finally {
+    // Always reset the flag when done, even if there was an error
+    AccountDeletionState.endDeletion();
   }
 };
