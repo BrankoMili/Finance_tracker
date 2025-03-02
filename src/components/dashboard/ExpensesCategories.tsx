@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { TooltipItem } from "chart.js"; // Import za tipove
-import { Currency } from "@/types/currency";
 import { Expense } from "@/types/expense";
 import { CategoryItem } from "@/types/categoryItem";
 import { useMonth } from "@/hooks/useMonth";
 
 interface Props {
-  userCurrency: Currency;
+  userCurrency: string;
   expensesCurrentMonth: Expense[] | undefined;
   expensesLoading: boolean;
   expensesError: Error | null;

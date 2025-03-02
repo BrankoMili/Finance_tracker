@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import SkeletonLoader from "../SkeletonLoader";
 import { useMonth } from "@/hooks/useMonth";
 import { format } from "date-fns";
-import { Currency } from "@/types/currency";
 import { Expense } from "@/types/expense";
 
 interface Props {
-  userCurrency: Currency;
+  userCurrency: string;
   expensesCurrentMonth: Expense[] | undefined;
   expensesLoading: boolean;
   expensesError: Error | null;
