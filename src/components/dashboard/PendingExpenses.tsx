@@ -2,7 +2,6 @@
 
 import SkeletonLoader from "../SkeletonLoader";
 import { useState, useEffect } from "react";
-import { Currency } from "@/types/currency";
 import { collection, addDoc } from "firebase/firestore";
 import { showToast } from "@/utils/showToast";
 import { auth } from "@/lib/firebase";
@@ -13,7 +12,7 @@ import { CategoryItem } from "@/types/categoryItem";
 import { Expense } from "@/types/expense";
 
 interface Props {
-  userCurrency: Currency;
+  userCurrency: string;
   subscriptionsError: Error | null;
   subscriptionsLoading: boolean;
   subscriptions: Expense[] | undefined;

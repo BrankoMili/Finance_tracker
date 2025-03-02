@@ -442,9 +442,11 @@ export default function Expenses() {
         <span
           className="w-1/5 overflow-hidden text-ellipsis pr-2 text-textMain cursor-pointer"
           onClick={() => {
-            sortCategories === "ascending"
-              ? setSortCategories("descending")
-              : setSortCategories("ascending");
+            if (sortCategories === "ascending") {
+              setSortCategories("descending");
+            } else {
+              setSortCategories("ascending");
+            }
           }}
         >
           Date <span>{sortCategories === "ascending" ? " ↑" : " ↓"}</span>

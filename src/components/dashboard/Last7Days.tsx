@@ -2,12 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
-import { Currency } from "@/types/currency";
 import { Expense } from "@/types/expense";
 import { format, subDays, isSameDay } from "date-fns";
 
 interface Props {
-  userCurrency: Currency;
+  userCurrency: string;
   expensesSevenDays: Expense[] | undefined;
   expensesLoading: boolean;
   expensesError: Error | null;
@@ -186,7 +185,7 @@ export default function Last7Days({
 
       return () => myChart.destroy();
     }
-  }, [userCurrency, amountPerDay]);
+  }, [userCurrency, amountPerDay, datesLabels]);
 
   return (
     <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">

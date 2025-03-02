@@ -394,7 +394,7 @@ export default function Settings() {
               className="mt-6 text-xl font-semibold text-textSecond mb-4 cursor-pointer block w-fit hover:text-textMain flex items-center"
               onClick={() => setShowCategories(!showCategories)}
             >
-              User's Categories
+              User&apos;s Categories
               {showCategories ? (
                 <div>
                   <FaAngleDown />{" "}
