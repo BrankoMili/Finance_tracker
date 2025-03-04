@@ -66,7 +66,6 @@ export default function MyProfile() {
     try {
       setUploading(true);
 
-      // 1. Припрема за Cloudinary Upload
       const formData = new FormData();
       formData.append("file", file);
       formData.append(
@@ -74,15 +73,12 @@ export default function MyProfile() {
         process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
       );
 
-      // 2. Подешавање Asset Folder структуре
       const userFolder = `finance-tracker/profile-pictures/${user.uid}`;
       formData.append("folder", userFolder);
 
-      // 3. Форсирање јединственог public_id
       const publicId = `profile_${Date.now()}`;
       formData.append("public_id", publicId);
 
-      // 4. Слање захтева
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
         { method: "POST", body: formData }
@@ -107,7 +103,7 @@ export default function MyProfile() {
           {/* Left Profile Section */}
           <div className="md:w-1/3 bg-primary/15 p-8 flex flex-col items-center space-y-6">
             <div>
-              <div className="w-32 h-32 mx-auto relative">
+              <div className="w-32 h-32">
                 <Image
                   src={
                     user.photoURL
@@ -115,12 +111,9 @@ export default function MyProfile() {
                       : "/assets/images/userIcon.svg"
                   }
                   alt="Profile"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 128px"
-                  style={{
-                    objectFit: "cover"
-                  }}
-                  className="rounded-full border-4 border-border shadow-lg"
+                  width={128}
+                  height={128}
+                  className="w-32 h-32 rounded-full border-4 border-border shadow-lg object-cover"
                 />
               </div>
 
@@ -205,13 +198,13 @@ export default function MyProfile() {
                   <p className="text-sm text-primary font-semibold mb-2 break-words">
                     Connected Social Account
                   </p>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center">
                     <Image
                       src="/assets/images/google_logo.png"
                       alt="Google"
                       width={32}
                       height={32}
-                      className="w-8 h-8"
+                      className="w-8 h-8 mr-3"
                     />
                     <span className="text-textSecond font-medium break-words">
                       Google Account

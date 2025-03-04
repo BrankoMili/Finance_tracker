@@ -121,7 +121,7 @@ export default function PendingExpenses({
       {showSubscriptionForm && (
         <form
           onSubmit={handleForm}
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto  bg-componentsBackground p-6 mt-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
           <p
             className="absolute top-2 right-4 font-bold text-textSecond cursor-pointer text-lg hover:text-textMain"

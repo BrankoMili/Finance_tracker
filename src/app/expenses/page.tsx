@@ -568,7 +568,7 @@ export default function Expenses() {
         </span>
       </div>
 
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md ">
         {expenseFormOpen && (
           <div className="relative">
             <ExpenseForm userCategories={userCategories} />

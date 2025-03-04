@@ -38,26 +38,26 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
                 <Image
                   src={"/assets/images/userIcon.svg"}
                   alt="Profile image"
-                  className="w-7"
-                  width={32}
-                  height={32}
+                  className="w-11 h-11 object-cover rounded-full border-4 border-border"
+                  width={44}
+                  height={44}
                 />
               ) : user === null || error ? (
                 <Image
                   src={"/assets/images/userIcon.svg"}
                   alt="Profile image"
-                  className="w-7"
-                  width={32}
-                  height={32}
+                  className="w-11 h-11 object-cover rounded-full border-4 border-border"
+                  width={44}
+                  height={44}
                 />
               ) : (
                 <div>
                   <Image
                     src={user?.photoURL || "/assets/images/userIcon.svg"}
                     alt="Profile image"
-                    className="w-9 rounded-full border-4 border-border"
-                    width={32}
-                    height={32}
+                    className="w-11 h-11 object-cover rounded-full border-4 border-border"
+                    width={44}
+                    height={44}
                   />
                 </div>
               )}
