@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
 
       // Provera da li je email verifikovan
       if (!payload.email_verified && path !== "/login" && path !== "/signup") {
-        return NextResponse.redirect(new URL("/verify-email", request.url));
+        return NextResponse.redirect(new URL("/login", request.url));
       }
     } catch (error) {
       console.error("Verifikacija tokena nije uspela:", error);
