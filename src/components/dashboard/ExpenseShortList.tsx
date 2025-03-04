@@ -31,7 +31,7 @@ export default function ExpenseShortList({
   // sum of all expenses for this month
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return;
     if (
       expensesCurrentMonth?.length === 0 ||
       expensesLoading ||

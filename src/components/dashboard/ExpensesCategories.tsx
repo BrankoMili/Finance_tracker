@@ -41,7 +41,7 @@ export default function ExpensesCategories({
       return;
     }
 
-    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return;
 
     const categories = userCategories.map(item => item.name.toLowerCase());
     const amountByCategory = Array(categories.length).fill(0);

@@ -55,7 +55,7 @@ export default function Last7Days({
   // sum of all expenses last 7 days per day
   useEffect(() => {
     if (Object.keys(exchangeRates).length === 0) return;
-    if (isExchangesLoading || errorExchanges !== null) return; // Skini komentar za PRODUKCIJU
+    if (isExchangesLoading || errorExchanges !== null) return;
 
     if (
       expensesSevenDays?.length === 0 ||
