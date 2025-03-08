@@ -21,6 +21,11 @@ import { Fragment } from "react";
 import { showToast } from "@/utils/showToast";
 import { CURRENCIES } from "@/constants/currencies";
 import { Filters } from "@/types/filters";
+import { Button } from "@/components/shared/Button";
+import { InputTextNumberPass } from "@/components/shared/InputTextNumberPass";
+import { Select } from "@/components/shared/Select";
+import { DatePicker } from "@/components/shared/DatePicker";
+import ErrorComponent from "@/components/ErrorComponent";
 
 export default function Expenses() {
   const [sortCategories, setSortCategories] = useState("descending");
@@ -141,6 +146,12 @@ export default function Expenses() {
     setAppliedFilters(defaultFilters);
   };
 
+  // Handle errors first
+  if (expensesError || errorExchanges) {
+    const error = expensesError || errorExchanges || new Error("Unknown error");
+    return <ErrorComponent error={error} />;
+  }
+
   return (
     <div className="bg-componentsBackground p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -179,7 +190,7 @@ export default function Expenses() {
       {editForm && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto p-6 mt-8 bg-gray-50 rounded-lg border border-gray-200 animate-fadeIn">
           <XMarkIcon
-            className="absolute right-3 top-2 h-5 w-5 text-textThird cursor-pointer hover:text-textSecond"
+            className="absolute right-3 top-2 h-6 w-6 text-textThird cursor-pointer hover:bg-[rgb(233,233,233)] w-6 h-6 flex items-center justify-center rounded-xl"
             onClick={() => setEditForm(false)}
           />
           {editItem !== undefined && (
@@ -187,7 +198,9 @@ export default function Expenses() {
               <div className="grid grid-cols-[auto_1fr] items-center gap-4">
                 {/* Description */}
                 <label className="text-sm font-medium w-24">Description:</label>
-                <input
+
+                <InputTextNumberPass
+                  textSize="small"
                   type="text"
                   onChange={e =>
                     setEditItem(prevState => ({
@@ -196,12 +209,13 @@ export default function Expenses() {
                     }))
                   }
                   value={editItem.description}
-                  className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
 
                 {/* Category */}
                 <label className="text-sm font-medium w-24">Category:</label>
-                <input
+
+                <InputTextNumberPass
+                  textSize="small"
                   type="text"
                   onChange={e =>
                     setEditItem(prevState => ({
@@ -210,12 +224,12 @@ export default function Expenses() {
                     }))
                   }
                   value={editItem.category}
-                  className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
 
                 {/* Amount */}
                 <label className="text-sm font-medium w-24">Amount:</label>
-                <input
+                <InputTextNumberPass
+                  textSize="small"
                   type="number"
                   step="0.01"
                   onChange={e =>
@@ -225,14 +239,12 @@ export default function Expenses() {
                     }))
                   }
                   value={editItem.amount}
-                  className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
 
                 {/* Currency */}
                 <label className="text-sm font-medium w-24">Currency:</label>
-                <select
-                  name="currency"
-                  className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary [&>option]:text-sm [&>option]:p-1"
+                <Select
+                  textSize="small"
                   value={editItem.currency}
                   onChange={e =>
                     setEditItem(prevState => ({
@@ -246,39 +258,37 @@ export default function Expenses() {
                       {name} ({code})
                     </option>
                   ))}
-                </select>
+                </Select>
 
                 {/* Date */}
                 <label className="text-sm font-medium w-24">Date:</label>
-                <input
-                  type="date"
-                  onChange={e =>
+                <DatePicker
+                  value={editItem.date}
+                  onChange={date => {
                     setEditItem(prevState => ({
                       ...prevState!,
-                      date: new Date(e.target.value)
-                    }))
-                  }
-                  value={
-                    editItem.date ? format(editItem.date, "yyyy-MM-dd") : ""
-                  }
-                  className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                      date
+                    }));
+                  }}
                 />
               </div>
 
               {/* Buttons */}
               <div className="flex justify-end gap-2 mt-4">
-                <button
+                <Button
                   onClick={() => setEditForm(false)}
-                  className="px-3 py-1.5 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
+                  text="Cancel"
+                  buttonWidth="compact"
+                  buttonSize="small"
+                  buttonColor="gray"
+                />
+
+                <Button
+                  text="Save Changes"
                   onClick={handleChangeItem}
-                  className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-                >
-                  Save Changes
-                </button>
+                  buttonWidth="compact"
+                  buttonSize="small"
+                />
               </div>
             </div>
           )}
@@ -291,7 +301,7 @@ export default function Expenses() {
           <div className="flex justify-between items-center mb-3">
             <h4 className="font-medium text-textMain">Filters</h4>
             <XMarkIcon
-              className="h-5 w-5 text-textThird cursor-pointer hover:text-textMain"
+              className="text-textThird cursor-pointer hover:bg-[rgb(233,233,233)] w-6 h-6 flex items-center justify-center rounded-xl"
               onClick={() => setShowFilters(!showFilters)}
             />
           </div>
@@ -301,11 +311,11 @@ export default function Expenses() {
               <label className="block text-sm font-medium text-textSecond mb-1">
                 Category
               </label>
-              <select
+              <Select
+                textSize="small"
                 name="category"
                 value={filters.category}
                 onChange={handleFilterChange}
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="">All Categories</option>
                 {userCategories?.map(category => {
@@ -318,20 +328,20 @@ export default function Expenses() {
                     </option>
                   );
                 })}
-              </select>
+              </Select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-textSecond mb-1">
                 Min Amount
               </label>
-              <input
+              <InputTextNumberPass
+                textSize="small"
                 type="number"
                 name="minAmount"
-                value={filters.minAmount}
+                value={filters.minAmount || ""}
                 onChange={handleFilterChange}
                 placeholder="0"
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -339,13 +349,13 @@ export default function Expenses() {
               <label className="block text-sm font-medium text-textSecond mb-1">
                 Max Amount
               </label>
-              <input
+              <InputTextNumberPass
+                textSize="small"
                 type="number"
                 name="maxAmount"
-                value={filters.maxAmount}
+                value={filters.maxAmount || ""}
                 onChange={handleFilterChange}
                 placeholder="1000"
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
 
@@ -353,21 +363,14 @@ export default function Expenses() {
               <label className="block text-sm font-medium text-textSecond mb-1">
                 Start Date
               </label>
-              <input
-                type="date"
-                name="startDate"
-                value={
-                  filters.startDate
-                    ? format(filters.startDate, "yyyy-MM-dd")
-                    : ""
-                }
-                onChange={e =>
-                  setFilters({
+              <DatePicker
+                value={filters.startDate}
+                onChange={date => {
+                  setFilters(filters => ({
                     ...filters,
-                    startDate: e.target.value ? new Date(e.target.value) : null
-                  })
-                }
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    startDate: date ? date : null
+                  }));
+                }}
               />
             </div>
 
@@ -375,19 +378,14 @@ export default function Expenses() {
               <label className="block text-sm font-medium text-textSecond mb-1">
                 End Date
               </label>
-              <input
-                type="date"
-                name="endDate"
-                value={
-                  filters.endDate ? format(filters.endDate, "yyyy-MM-dd") : ""
-                }
-                onChange={e =>
-                  setFilters({
+              <DatePicker
+                value={filters.endDate}
+                onChange={date => {
+                  setFilters(filters => ({
                     ...filters,
-                    endDate: e.target.value ? new Date(e.target.value) : null
-                  })
-                }
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    endDate: date ? date : null
+                  }));
+                }}
               />
             </div>
 
@@ -395,9 +393,9 @@ export default function Expenses() {
               <label className="block text-sm font-medium text-textSecond mb-1">
                 Currency
               </label>
-              <select
+              <Select
+                textSize="small"
                 name="currency"
-                className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary [&>option]:text-sm [&>option]:p-1"
                 value={filters.currency}
                 onChange={handleFilterChange}
               >
@@ -407,23 +405,25 @@ export default function Expenses() {
                     {name} ({code})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
-            <button
+            <Button
+              text="Clear"
               onClick={clearFilters}
-              className="px-4 py-2 text-sm text-textSecond hover:text-textMain focus:outline-none"
-            >
-              Clear
-            </button>
-            <button
+              buttonColor="gray"
+              buttonSize="small"
+              buttonWidth="compact"
+            />
+
+            <Button
+              text="Apply Filters"
               onClick={applyFilters}
-              className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
-              Apply Filters
-            </button>
+              buttonSize="small"
+              buttonWidth="compact"
+            />
           </div>
         </div>
       )}
@@ -573,19 +573,18 @@ export default function Expenses() {
           <div className="relative">
             <ExpenseForm userCategories={userCategories} />
             <XMarkIcon
-              className="absolute right-3 top-2 h-5 w-5 text-textThird cursor-pointer hover:text-textSecond"
+              className="absolute right-3 top-2 h-6 w-6 text-textThird cursor-pointer hover:bg-border w-6 h-6 flex items-center justify-center rounded-xl"
               onClick={() => setExpenseFormOpen(!expenseFormOpen)}
             />
           </div>
         )}
       </div>
       <div className="justify-end flex mt-4">
-        <button
+        <Button
+          text="Add New"
           onClick={() => setExpenseFormOpen(!expenseFormOpen)}
-          className="bg-secondary text-white py-2 px-4 rounded-lg hover:bg-thirdly focus:ring-2 focus:primary focus:ring-offset-2 transition-all"
-        >
-          Add New
-        </button>
+          buttonWidth="compact"
+        />
       </div>
     </div>
   );

@@ -13,6 +13,8 @@ import {
   sendEmailVerification
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { InputTextNumberPass } from "@/components/shared/InputTextNumberPass";
+import { Button } from "@/components/shared/Button";
 
 export default function Signup() {
   interface Notification {
@@ -130,9 +132,9 @@ export default function Signup() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">
+    <main className="min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-componentsBackground rounded-lg shadow-lg p-8">
+        <h1 className="text-3xl font-bold text-textSecond text-center mb-6">
           Create Account
         </h1>
 
@@ -148,15 +150,14 @@ export default function Signup() {
 
         <form onSubmit={handleEmailSignup} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
+            <label className="block text-sm font-medium text-textSecond mb-1">
               Username
             </label>
-            <input
+            <InputTextNumberPass
               type="text"
               placeholder="Enter your username"
               required
               autoComplete="username"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.username}
               onChange={e =>
                 setFormData(prev => ({ ...prev, username: e.target.value }))
@@ -165,15 +166,14 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
+            <label className="block text-sm font-medium text-textSecond mb-1">
               Email
             </label>
-            <input
+            <InputTextNumberPass
               type="email"
               placeholder="Enter your email"
               required
               autoComplete="email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.email}
               onChange={e =>
                 setFormData(prev => ({ ...prev, email: e.target.value }))
@@ -182,15 +182,14 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
+            <label className="block text-sm font-medium text-textSecond mb-1">
               Password
             </label>
-            <input
+            <InputTextNumberPass
               type="password"
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.password}
               onChange={e =>
                 setFormData(prev => ({ ...prev, password: e.target.value }))
@@ -199,15 +198,14 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
+            <label className="block text-sm font-medium text-textSecond mb-2">
               Confirm Password
             </label>
-            <input
+            <InputTextNumberPass
               type="password"
               placeholder="••••••••"
               required
               autoComplete="new-password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               value={formData.confirmPassword}
               onChange={e =>
                 setFormData(prev => ({
@@ -218,12 +216,7 @@ export default function Signup() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Sign Up
-          </button>
+          <Button text="Sign Up" type="submit" />
         </form>
 
         <div className="mt-6">
@@ -232,7 +225,7 @@ export default function Signup() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
+              <span className="px-2 bg-componentsBackground text-textThird">
                 Or continue with
               </span>
             </div>
@@ -248,14 +241,15 @@ export default function Signup() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-sm text-gray-900/80">
+        <p className="mt-6 text-center text-sm text-textSecond">
           Already have an account?{" "}
-          <button
+          <Button
             onClick={() => router.push("/login")}
-            className="text-indigo-500 hover:text-indigo-600 font-medium"
-          >
-            Log in
-          </button>
+            buttonColor="noBackground"
+            text="Log in"
+            buttonSize="small"
+            buttonWidth="compact"
+          />
         </p>
       </div>
     </main>

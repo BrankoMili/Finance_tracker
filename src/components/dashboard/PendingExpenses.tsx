@@ -1,7 +1,7 @@
 "use client";
 
 import SkeletonLoader from "../SkeletonLoader";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { showToast } from "@/utils/showToast";
 import { auth } from "@/lib/firebase";
@@ -10,6 +10,12 @@ import { format } from "date-fns";
 import { CURRENCIES } from "@/constants/currencies";
 import { CategoryItem } from "@/types/categoryItem";
 import { Expense } from "@/types/expense";
+import { Button } from "../shared/Button";
+import { InputTextNumberPass } from "../shared/InputTextNumberPass";
+import { Select } from "../shared/Select";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { DatePicker } from "../shared/DatePicker";
+import { useOverlay } from "@/context/OverlayContext";
 
 interface Props {
   userCurrency: string;
@@ -34,6 +40,13 @@ export default function PendingExpenses({
 }: Props) {
   const [showSubscriptionForm, setShowSubscriptionForm] =
     useState<boolean>(false);
+  const { toggleOverlay } = useOverlay();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleFormToggle = (isOpen: boolean) => {
+    setShowSubscriptionForm(isOpen);
+    toggleOverlay(isOpen);
+  };
 
   const [subscription, setSubscription] = useState<Expense>({
     amount: 0,
@@ -106,11 +119,26 @@ export default function PendingExpenses({
     errorExchanges
   ]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formRef.current && !formRef.current.contains(event.target as Node)) {
+        setShowSubscriptionForm(false);
+        handleFormToggle(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   // Check for errors
   const errorMessage = subscriptionsError?.message || errorExchanges?.message;
   if (errorMessage) {
     return (
-      <div className="bg-componentsBackground p-6 rounded-xl shadow-lg max-w-md mx-auto">
+      <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
         <div className="text-red-400 text-center p-4">{errorMessage}</div>
       </div>
     );
@@ -120,14 +148,18 @@ export default function PendingExpenses({
     <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       {showSubscriptionForm && (
         <form
+          ref={formRef}
           onSubmit={handleForm}
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+          className="z-40 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
         >
           <p
-            className="absolute top-2 right-4 font-bold text-textSecond cursor-pointer text-lg hover:text-textMain"
-            onClick={() => setShowSubscriptionForm(false)}
+            className="absolute top-2 right-4 font-bold text-textSecond cursor-pointer hover:bg-border w-6 h-6 flex items-center justify-center rounded-xl"
+            onClick={() => {
+              setShowSubscriptionForm(false);
+              handleFormToggle(false);
+            }}
           >
-            x
+            <XMarkIcon className="h-6 w-6" />
           </p>
           <h2 className="font-bold text-textSecond mb-6 text-center">
             Add new subscription
@@ -137,10 +169,9 @@ export default function PendingExpenses({
             <label className="block text-sm font-medium text-textSecond mb-1">
               Amount
             </label>
-            <input
+            <InputTextNumberPass
               type="number"
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={subscription.amount || ""}
               onChange={e => {
                 setSubscription({
@@ -153,12 +184,11 @@ export default function PendingExpenses({
           </div>
 
           {/* Currency Input */}
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-textSecond mb-1">
               Currency
             </label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&>option]:text-sm [&>option]:p-1"
+            <Select
               value={subscription.currency}
               onChange={e =>
                 setSubscription({
@@ -172,7 +202,7 @@ export default function PendingExpenses({
                   {name} ({code})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           {/* Description Input */}
@@ -180,10 +210,9 @@ export default function PendingExpenses({
             <label className="block text-sm font-medium text-textSecond mb-1">
               Description
             </label>
-            <input
+            <InputTextNumberPass
               type="text"
               placeholder="e.g., Youtube Premium"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
               value={subscription.description}
               onChange={e =>
                 setSubscription({
@@ -196,12 +225,11 @@ export default function PendingExpenses({
           </div>
 
           {/* Category Select */}
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-sm font-medium text-textSecond mb-1">
               Category
             </label>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            <Select
               value={subscription.category}
               onChange={e =>
                 setSubscription({
@@ -220,7 +248,7 @@ export default function PendingExpenses({
                   </option>
                 );
               })}
-            </select>
+            </Select>
           </div>
 
           {/* Date Input */}
@@ -228,25 +256,17 @@ export default function PendingExpenses({
             <label className="block text-sm font-medium text-textSecond mb-1">
               Date - Monthly subscription
             </label>
-            <input
-              type="date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              onChange={e =>
+            <DatePicker
+              value={subscription.date}
+              onChange={date => {
                 setSubscription({
                   ...subscription,
-                  date: new Date(e.target.value)
-                })
-              }
-              required
+                  date
+                });
+              }}
             />
           </div>
-
-          <button
-            type="submit"
-            className="ml-10 bg-secondary text-white py-1 px-3 rounded-lg hover:bg-thirdly focus:ring-2 focus:primary focus:ring-offset-2 transition-all"
-          >
-            Add Subscription
-          </button>
+          <Button text="Add Subscription" type="submit" buttonSize="small" />
         </form>
       )}
 
@@ -282,18 +302,18 @@ export default function PendingExpenses({
 
           {/* Monthly Summary */}
           <div className="pt-4 mt-2 border-t border-gray-200 flex items-center justify-center">
-            <p className="text-center text-textSecond text-sm">
+            <p className="text-center text-textSecond text-sm mr-10">
               Monthly Total:{" "}
               <span className="font-semibold">
                 {subscriptionAmount.toFixed(2)} {userCurrency}
               </span>
             </p>
-            <button
-              onClick={() => setShowSubscriptionForm(!showSubscriptionForm)}
-              className="ml-10 bg-secondary text-white text-sm py-1 px-2 rounded-lg hover:bg-thirdly focus:ring-2 focus:primary focus:ring-offset-2 transition-all"
-            >
-              New Subscription
-            </button>
+            <Button
+              onClick={() => handleFormToggle(!showSubscriptionForm)}
+              text="New Subscription"
+              buttonWidth="compact"
+              buttonSize="small"
+            />
           </div>
         </div>
       )}

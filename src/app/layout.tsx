@@ -6,6 +6,7 @@ import { ToastProvider } from "@/components/ToastProvider";
 import AuthGuard from "@/components/AuthGuard";
 import LayoutWrapper from "./LayoutWrapper";
 import { TokenRefresher } from "@/components/TokenRefresher";
+import { OverlayProvider } from "@/context/OverlayContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <AuthGuard>
           <ToastProvider />
           <TokenRefresher />
-          <LayoutWrapper>{children}</LayoutWrapper>
+          <OverlayProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </OverlayProvider>
         </AuthGuard>
       </body>
     </html>

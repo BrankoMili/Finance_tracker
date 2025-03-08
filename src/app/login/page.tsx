@@ -12,6 +12,8 @@ import {
 import { showToast } from "@/utils/showToast";
 import { FirebaseError } from "@firebase/util";
 import { useState } from "react";
+import { InputTextNumberPass } from "@/components/shared/InputTextNumberPass";
+import { Button } from "@/components/shared/Button";
 
 export default function Login() {
   const router = useRouter();
@@ -172,41 +174,34 @@ export default function Login() {
         </div>
 
         {/* Desna strana sa formom */}
-        <div className="w-full lg:w-1/2 bg-gray-50 flex items-center justify-center p-8">
-          <div className="w-full max-w-md min-h-[500px]">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        <div className="w-full lg:w-1/2 bg-componentsBackground flex items-center justify-center p-8">
+          <div className="w-[400px] max-w-md h-[500px]">
+            <h1 className="text-4xl font-bold text-textSecond mb-8">
               {showResetPassword ? "Reset Password" : "Sign In"}
             </h1>
 
             {showResetPassword ? (
-              <form onSubmit={handleResetPassword} className="space-y-6 ">
+              <form onSubmit={handleResetPassword} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm font-medium text-textSecond mb-2">
                     Email
                   </label>
-                  <input
+                  <InputTextNumberPass
                     type="email"
                     name="resetEmail"
                     required
                     placeholder="Enter your email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    height="high"
                   />
                 </div>
+                <Button text="Send Reset Link" type="submit" />
 
-                <button
-                  type="submit"
-                  className="w-full bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-600 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Send Reset Link
-                </button>
-
-                <button
+                <Button
+                  text="Back to Sign In"
+                  buttonColor="noBackground"
                   type="button"
                   onClick={() => setShowResetPassword(false)}
-                  className="w-full mt-4 text-center text-indigo-500 hover:text-indigo-600 font-medium"
-                >
-                  Back to Sign In
-                </button>
+                />
               </form>
             ) : (
               <>
@@ -216,60 +211,55 @@ export default function Login() {
                 >
                   {/* Existing email field */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-textSecond mb-2">
                       Email
                     </label>
-                    <input
+                    <InputTextNumberPass
+                      height="high"
                       type="email"
                       name="email"
                       autoComplete="email"
                       required
                       placeholder="Enter your email"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Existing password field */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
+                    <label className="block text-sm font-medium text-textSecond mb-2">
                       Password
                     </label>
-                    <input
+                    <InputTextNumberPass
+                      height="high"
                       type="password"
                       name="password"
                       autoComplete="current-password"
                       required
                       placeholder="••••••••"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Forgot Password link */}
                   <div className="flex justify-end">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setShowResetPassword(true)}
-                      className="text-sm text-indigo-500 hover:text-indigo-600 font-medium"
-                    >
-                      Forgot Password?
-                    </button>
+                      text="Forgot Password?"
+                      buttonColor="noBackground"
+                      buttonWidth="compact"
+                      buttonSize="small"
+                    />
                   </div>
 
                   {notVerified && !auth.currentUser && (
-                    <button
+                    <Button
                       onClick={handleResendVerification}
-                      className="text-indigo-500 hover:text-indigo-600 text-sm"
-                    >
-                      Resend the verification email
-                    </button>
+                      text="Resend the verification email"
+                      buttonColor="noBackground"
+                    />
                   )}
 
-                  <button
-                    type="submit"
-                    className="w-full bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-600 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    Log in
-                  </button>
+                  <Button text="Log in" type="submit" buttonHeight="high" />
                 </form>
 
                 {/* Existing social login and signup links */}
@@ -280,14 +270,15 @@ export default function Login() {
                 >
                   <GoogleSignInBtn />
                 </button>
-                <p className="mt-8 text-center text-sm text-gray-900/80">
+                <p className="mt-8 text-center text-sm text-textThird">
                   Don&apos;t have an account?{" "}
-                  <button
+                  <Button
                     onClick={() => router.push("/signup")}
-                    className="text-indigo-500 hover:text-indigo-600 font-medium"
-                  >
-                    Sign up
-                  </button>
+                    text="Sign up"
+                    buttonColor="noBackground"
+                    buttonSize="small"
+                    buttonWidth="compact"
+                  />
                 </p>
               </>
             )}

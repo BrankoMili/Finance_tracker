@@ -8,6 +8,9 @@ import { auth } from "@/lib/firebase";
 import { showToast } from "@/utils/showToast";
 import { CategoryItem } from "@/types/categoryItem";
 import { CURRENCIES } from "@/constants/currencies";
+import { Button } from "./shared/Button";
+import { InputTextNumberPass } from "./shared/InputTextNumberPass";
+import { Select } from "./shared/Select";
 
 interface Props {
   userCategories: CategoryItem[] | undefined;
@@ -70,10 +73,9 @@ export default function ExpenseForm({ userCategories }: Props) {
         <label className="block text-sm font-medium text-textSecond mb-1">
           Amount
         </label>
-        <input
+        <InputTextNumberPass
           type="number"
           placeholder="0.00"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           value={expense.amount || ""}
           onChange={e =>
             setExpense({ ...expense, amount: Number(e.target.value) })
@@ -83,12 +85,12 @@ export default function ExpenseForm({ userCategories }: Props) {
       </div>
 
       {/* Currency Select */}
-      <div className="mb-6">
+      <div className="mb-4">
         <label className="block text-sm font-medium text-textSecond mb-1">
           Currency
         </label>
-        <select
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&>option]:text-sm [&>option]:p-1"
+
+        <Select
           value={expense.currency}
           onChange={e =>
             setExpense({
@@ -102,7 +104,7 @@ export default function ExpenseForm({ userCategories }: Props) {
               {name} ({code})
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* Description Input */}
@@ -110,10 +112,9 @@ export default function ExpenseForm({ userCategories }: Props) {
         <label className="block text-sm font-medium text-textSecond mb-1">
           Description
         </label>
-        <input
+        <InputTextNumberPass
           type="text"
           placeholder="e.g., Groceries"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
           value={expense.description}
           onChange={e =>
             setExpense({ ...expense, description: e.target.value })
@@ -127,8 +128,8 @@ export default function ExpenseForm({ userCategories }: Props) {
         <label className="block text-sm font-medium text-textSecond mb-1">
           Category
         </label>
-        <select
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+
+        <Select
           value={expense.category}
           onChange={e =>
             setExpense({
@@ -147,16 +148,16 @@ export default function ExpenseForm({ userCategories }: Props) {
               </option>
             );
           })}
-        </select>
+        </Select>
       </div>
 
       {/* Submit Button */}
-      <button
+      <Button
+        text="Add"
         type="submit"
-        className="w-full bg-secondary text-white py-2 px-4 rounded-lg hover:bg-thirdly focus:ring-2 focus:primary focus:ring-offset-2 transition-all"
-      >
-        Add
-      </button>
+        buttonWidth="fullWidth"
+        buttonSize="small"
+      />
     </form>
   );
 }

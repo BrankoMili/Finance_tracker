@@ -4,6 +4,6 @@ export interface Expense {
   description: string;
   category: string;
   currency: string;
-  date: Date;
+  date: Date | null;
   userId: string | undefined;
 }

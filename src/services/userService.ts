@@ -20,6 +20,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { AccountDeletionState } from "@/services/accountDeletionState";
 
+// Create User profile in Firebase database
 export const createUserProfile = async (user: User) => {
   const userRef = doc(db, "users", user.uid);
   const docSnap = await getDoc(userRef);
@@ -75,6 +76,7 @@ const deleteCloudinaryUserImages = async (userId: string) => {
   }
 };
 
+// Delete user profile and user data
 export const deleteUserAccount = async (password?: string) => {
   const user = auth.currentUser;
   if (!user) throw new Error("User not authenticated");
@@ -139,7 +141,6 @@ export const deleteUserAccount = async (password?: string) => {
     console.error("Error deleting account:", error);
     throw error;
   } finally {
-    // Always reset the flag when done, even if there was an error
     AccountDeletionState.endDeletion();
   }
 };

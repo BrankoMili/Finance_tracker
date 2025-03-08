@@ -58,12 +58,12 @@ export const useExpenses = (appliedFilters: Filters = defaultFilters) => {
           // Apply amount range filters
           if (appliedFilters.minAmount > 0) {
             queryConditions.push(
-              where("amount", ">=", appliedFilters.minAmount)
+              where("amount", ">=", Number(appliedFilters.minAmount))
             );
           }
           if (appliedFilters.maxAmount > 0) {
             queryConditions.push(
-              where("amount", "<=", appliedFilters.maxAmount)
+              where("amount", "<=", Number(appliedFilters.maxAmount))
             );
           }
 

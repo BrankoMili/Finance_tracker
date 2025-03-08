@@ -20,6 +20,11 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { FaAngleRight, FaAngleDown } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { CURRENCIES } from "@/constants/currencies";
+import { Button } from "@/components/shared/Button";
+import { InputTextNumberPass } from "@/components/shared/InputTextNumberPass";
+import { Select } from "@/components/shared/Select";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Settings() {
   const [userCurrency, setUserCurrency] = useState("");
@@ -34,6 +39,7 @@ export default function Settings() {
   const [newCategory, setNewCategory] = useState("");
   const { userCategories } = useUserPreferences();
   const [showCategories, setShowCategories] = useState<boolean>(false);
+  const [user] = useAuthState(auth);
 
   // Type guard for Firebase errors
   function isFirebaseError(error: unknown): error is { code: string } {
@@ -128,7 +134,11 @@ export default function Settings() {
       if (!user) return;
 
       const savedTheme = localStorage.getItem("theme");
-      setTheme(savedTheme as Theme);
+      if (savedTheme === null) {
+        setTheme("light" as Theme);
+      } else {
+        setTheme(savedTheme as Theme);
+      }
 
       try {
         const userDocRef = doc(db, "users", user.uid);
@@ -243,7 +253,7 @@ export default function Settings() {
     }
   };
 
-  return (
+  return user ? (
     <div>
       <div className="max-w-2xl mx-auto">
         <h1 className="text-4xl font-semibold text-textSecond">Settings</h1>
@@ -254,11 +264,10 @@ export default function Settings() {
           <form onSubmit={handleSaveSettings}>
             <div className="mb-4">
               <label className="block text-textMain">Name</label>
-              <input
+              <InputTextNumberPass
                 type="text"
                 autoComplete="username"
-                className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
-                placeholder="John Doe"
+                placeholder={user.displayName || "username"}
                 value={name}
                 onChange={e => {
                   setName(e.target.value);
@@ -269,8 +278,7 @@ export default function Settings() {
               Preferences
             </p>
             <p className="mt-3 text-textMain">Currency</p>
-            <select
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&>option]:text-sm [&>option]:p-1"
+            <Select
               value={userCurrency}
               onChange={e => setUserCurrency(e.target.value)}
             >
@@ -279,7 +287,7 @@ export default function Settings() {
                   {name} ({code})
                 </option>
               ))}
-            </select>
+            </Select>
             <div className="mb-4">
               <p className="mt-6 text-xl font-semibold text-textSecond mb-4">
                 Theme
@@ -355,10 +363,9 @@ export default function Settings() {
                   <label className="block text-textMain">
                     Current password
                   </label>
-                  <input
+                  <InputTextNumberPass
                     type="password"
                     autoComplete="current-password"
-                    className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
                     placeholder="••••••••"
                     value={currentPassword}
                     onChange={e => setCurrentPassword(e.target.value)}
@@ -366,10 +373,9 @@ export default function Settings() {
                 </div>
                 <div className="mb-4">
                   <label className="block text-textMain">New password</label>
-                  <input
+                  <InputTextNumberPass
                     type="password"
                     autoComplete="new-password"
-                    className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
                     placeholder="••••••••"
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
@@ -379,10 +385,9 @@ export default function Settings() {
                   <label className="block text-textMain">
                     Repeat new password
                   </label>
-                  <input
+                  <InputTextNumberPass
                     type="password"
                     autoComplete="new-password"
-                    className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
@@ -412,20 +417,19 @@ export default function Settings() {
                     Add new category
                   </label>
                   <div className="flex gap-2">
-                    <input
+                    <InputTextNumberPass
                       type="text"
-                      className="w-full h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-3"
                       placeholder="Enter category name"
                       value={newCategory}
                       onChange={e => setNewCategory(e.target.value)}
                     />
-                    <button
+
+                    <Button
                       type="button"
-                      className="bg-secondary text-white px-4 py-2 rounded-md hover:bg-primary transition-colors"
+                      text="Add"
+                      buttonWidth="compact"
                       onClick={handleAddNewCategory}
-                    >
-                      Add
-                    </button>
+                    />
                   </div>
                 </div>
 
@@ -444,7 +448,7 @@ export default function Settings() {
                           className="text-textThird inline cursor-pointer"
                           onClick={() => deleteCategoryItem(category.id)}
                         >
-                          x
+                          <XMarkIcon className="w-4 h-4 inline hover:bg-border rounded-lg" />
                         </p>
                       </div>
                     ))}
@@ -452,15 +456,12 @@ export default function Settings() {
                 </div>
               </div>
             )}
-            <button
-              type="submit"
-              className="bg-secondary text-white mt-8 px-3 py-2 rounded-md hover:bg-primary"
-            >
-              Save Changes
-            </button>
+            <Button text="Save Changes" type="submit" buttonWidth="compact" />
           </form>
         </div>
       </div>
     </div>
+  ) : (
+    <p className="text-textMain">User not logged in</p>
   );
 }

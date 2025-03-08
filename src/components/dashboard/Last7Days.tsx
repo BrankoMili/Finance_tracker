@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Expense } from "@/types/expense";
 import { format, subDays, isSameDay } from "date-fns";
+import SkeletonLoader from "../SkeletonLoader";
 
 interface Props {
   userCurrency: string;
@@ -80,6 +81,8 @@ export default function Last7Days({
     const weekArr = [0, 0, 0, 0, 0, 0, 0];
 
     expensesSevenDays?.forEach(expense => {
+      if (!expense.date) return; // Skip if date is null or undefined
+
       const expenseDate = new Date(expense.date);
       expenseDate.setHours(0, 0, 0, 0);
 
@@ -187,19 +190,45 @@ export default function Last7Days({
     }
   }, [userCurrency, amountPerDay, datesLabels]);
 
+  const error = expensesError || errorExchanges;
+  const isLoading = expensesLoading || isExchangesLoading;
+  const hasData = amountPerDay && datesLabels;
+
   return (
     <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       <div className="mb-4">
-        <h3
-          className="font-bold text-textThird"
-          onClick={() => console.log(amountPerDay)}
-        >
-          Last 7 days
-        </h3>
+        <h3 className="font-bold text-textThird">Last 7 days</h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
-      <div className="flex-1" style={{ height: "calc(100% - 2rem)" }}>
-        <canvas ref={chartRef}></canvas>
+
+      <div className="flex-1 min-h-[300px] flex items-center justify-center">
+        {error ? (
+          // Error state
+          <div className="text-red-500 text-center p-4 bg-red-100 rounded-lg">
+            <p>Failed to load data</p>
+            <p className="text-sm text-red-600 mt-2">{error.message}</p>
+          </div>
+        ) : isLoading ? (
+          // Loading state
+          <div className="text-blue-500">
+            <SkeletonLoader />
+          </div>
+        ) : !hasData ? (
+          // No data state
+          <div className="text-textMain text-center">
+            <div className="text-2xl mb-2">📭</div>
+            <p>No expenses data available</p>
+            <p className="text-sm">for the last 7 days</p>
+          </div>
+        ) : (
+          // Chart
+          <div
+            className="w-full h-full"
+            style={{ height: "calc(100% - 2rem)" }}
+          >
+            <canvas ref={chartRef}></canvas>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 export default function GoogleSignInBtn() {
   return (
-    <div className="bg-white text-gray-800 px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-3">
+    <div className="bg-white text-gray-800 w-full px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-3">
       <svg className="w-6 h-6" viewBox="0 0 48 48">
         <path
           fill="#EA4335"

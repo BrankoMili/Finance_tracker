@@ -6,8 +6,11 @@ import {
   ChartPieIcon,
   CurrencyDollarIcon,
   Cog8ToothIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  ArrowLeftEndOnRectangleIcon
 } from "@heroicons/react/24/outline";
+import { AuthService } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 interface NavItem {
   href: string;
@@ -30,11 +33,22 @@ export default function Sidebar({
     { href: "/settings", label: "Settings", icon: Cog8ToothIcon },
     { href: "/myprofile", label: "My Profile", icon: UserCircleIcon }
   ];
+  const router = useRouter();
+
+  // User log out
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+      router.push("/login");
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+  };
 
   return (
     <aside
       className={`
-    fixed md:static inset-y-0 left-0 z-50
+    fixed md:static inset-y-0 left-0 z-20
     w-64 bg-componentsBackground border-r border-border
     transform transition-transform duration-200 ease-in-out
     h-screen overflow-y-auto
@@ -67,7 +81,6 @@ export default function Sidebar({
           </h2>
         </Link>
       </div>
-
       <nav className="px-2 sm:px-4 space-y-1">
         {navItems.map(item => {
           return (
@@ -91,6 +104,16 @@ export default function Sidebar({
           );
         })}
       </nav>
+
+      <div className="absolute bottom-8 px-2 sm:px-4 space-y-1 w-full">
+        <button
+          onClick={handleLogout}
+          className="text-sm border-t border-border w-full flex items-center px-4 py-3 rounded-xl text-textSecond hover:bg-hoverBg transition-colors"
+        >
+          <ArrowLeftEndOnRectangleIcon className="h-6 w-6 mr-3 stroke-gray-500" />
+          Log Out
+        </button>
+      </div>
     </aside>
   );
 }

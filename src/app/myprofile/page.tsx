@@ -2,21 +2,29 @@
 
 import { auth } from "@/lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import LogoutButton from "@/components/LogoutButton";
 import { updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { deleteUserAccount } from "@/services/userService";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Button } from "@/components/shared/Button";
+import ErrorComponent from "@/components/ErrorComponent";
+import { AuthService } from "@/services/authService";
 
 export default function MyProfile() {
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
   const [uploading, setUploading] = useState(false);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (user === null) return <p>User not logged in</p>;
+  // User log out
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+      router.push("/login");
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     const confirmation = window.confirm(
@@ -26,7 +34,7 @@ export default function MyProfile() {
     if (!confirmation) return;
 
     try {
-      // Provera tipa autentifikacije
+      // Check type of authentication
       const authProvider = user?.providerData[0]?.providerId;
 
       if (authProvider === "password") {
@@ -96,7 +104,47 @@ export default function MyProfile() {
     }
   };
 
-  return user ? (
+  if (loading)
+    return (
+      <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
+          <div className="flex flex-col md:flex-row">
+            {/* Left Section Skeleton */}
+            <div className="md:w-1/3 bg-primary/15 p-8 space-y-6">
+              <div className="animate-pulse">
+                <div className="w-32 h-32 rounded-full bg-gray-300 mx-auto" />
+                <div className="h-10 bg-gray-300 rounded-lg mt-6 w-32 mx-auto" />
+              </div>
+            </div>
+
+            {/* Right Section Skeleton */}
+            <div className="md:w-2/3 p-8 space-y-6 bg-componentsBackground">
+              <div className="animate-pulse space-y-8">
+                <div className="h-8 bg-gray-300 rounded w-1/3" />
+                <div className="space-y-4">
+                  <div className="h-20 bg-gray-300 rounded-lg" />
+                  <div className="h-20 bg-gray-300 rounded-lg" />
+                  <div className="h-20 bg-gray-300 rounded-lg" />
+                </div>
+                <div className="h-10 bg-gray-300 rounded w-1/4" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+  if (error) return <ErrorComponent error={error} />;
+  if (!user)
+    return (
+      <div className="py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
+          User not logged in
+        </div>
+      </div>
+    );
+
+  return (
     <div className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto rounded-2xl shadow-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
@@ -118,7 +166,7 @@ export default function MyProfile() {
               </div>
 
               <label
-                className={`mt-5 inline-block bg-primary text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-secondary transition-colors shadow-md cursor-pointer ${
+                className={`mt-5 inline-block text-sm bg-secondary text-white hover:bg-thirdly py-2 px-4 rounded-lg focus:ring-2 focus:primary focus:ring-offset-2 transition-all cursor-pointer ${
                   uploading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
@@ -168,12 +216,7 @@ export default function MyProfile() {
               <h2 className="text-2xl font-bold text-textSecond mb-2">
                 My Profile
               </h2>
-              <p
-                className="text-textThird"
-                onClick={() => console.log(user.photoURL)}
-              >
-                Manage your profile information
-              </p>
+              <p className="text-textThird">Manage your profile information</p>
             </div>
 
             <div className="space-y-4">
@@ -214,21 +257,25 @@ export default function MyProfile() {
               )}
             </div>
 
-            <button
-              className="bg-secondary text-white px-2 py-1 rounded hover:bg-thirdly"
+            <Button
               onClick={handleDeleteAccount}
-            >
-              Delete your account
-            </button>
+              text="Delete your account"
+              buttonWidth="compact"
+              buttonSize="small"
+            />
 
             <div className="flex justify-end">
-              <LogoutButton />
+              {/* LOG OUT */}
+              <Button
+                onClick={handleLogout}
+                text="Log Out"
+                buttonWidth="compact"
+                buttonColor="red"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-  ) : (
-    <p className="text-textMain">User not logged in</p>
   );
 }

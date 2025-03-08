@@ -6,6 +6,7 @@ import { TooltipItem } from "chart.js"; // Import za tipove
 import { Expense } from "@/types/expense";
 import { CategoryItem } from "@/types/categoryItem";
 import { useMonth } from "@/hooks/useMonth";
+import SkeletonLoader from "../SkeletonLoader";
 
 interface Props {
   userCurrency: string;
@@ -122,6 +123,9 @@ export default function ExpensesCategories({
     ]
   };
 
+  const error = expensesError || errorExchanges;
+  const isLoading = expensesLoading || isExchangesLoading;
+
   if (userCategories?.length === 0) {
     return (
       <div className="bg-componentsBackground p-6 rounded-xl">
@@ -135,17 +139,31 @@ export default function ExpensesCategories({
   return (
     <div className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full">
       <div className="mb-4">
-        <h3
-          className="font-bold text-textThird"
-          onClick={() => console.log(amountPerCategory)}
-        >
+        <h3 className="font-bold text-textThird">
           Spending by categories ({monthName}) in {userCurrency}
         </h3>
         <div className="bg-gray-300 h-0.5 mt-1"></div>
       </div>
-      <div className="h-[calc(100%-2rem)] flex justify-center">
-        <Pie data={chartData} options={options} className="max-w-80 max-h-80" />
-      </div>
+      {error ? (
+        // Error state
+        <div className="text-red-500 text-center p-4 bg-red-100 rounded-lg">
+          <p>Failed to load data</p>
+          <p className="text-sm text-red-600 mt-2">{error.message}</p>
+        </div>
+      ) : isLoading ? (
+        // Loading state
+        <div className="text-blue-500">
+          <SkeletonLoader />
+        </div>
+      ) : (
+        <div className="h-[calc(100%-2rem)] flex justify-center">
+          <Pie
+            data={chartData}
+            options={options}
+            className="max-w-80 max-h-80"
+          />
+        </div>
+      )}
     </div>
   );
 }
