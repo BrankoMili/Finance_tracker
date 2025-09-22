@@ -226,7 +226,7 @@ export const useExpenses = (
 
     // Clean up auth listener on component unmount
     return () => unsubscribeAuth();
-  }, [appliedFilters, applySearch, startTimestamp, endTimestamp]);
+  }, [appliedFilters, applySearch]);
 
   return {
     expenses,
