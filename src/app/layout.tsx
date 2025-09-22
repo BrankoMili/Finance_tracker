@@ -7,6 +7,7 @@ import AuthGuard from "@/components/AuthGuard";
 import LayoutWrapper from "./LayoutWrapper";
 import { TokenRefresher } from "@/components/TokenRefresher";
 import { OverlayProvider } from "@/context/OverlayContext";
+import "react-day-picker/style.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

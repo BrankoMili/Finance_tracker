@@ -55,20 +55,13 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames
       }}
-      components={{
-        IconLeft: ({ className, ...props }) => (
-          <ChevronLeft
-            className={cn("h-4 w-4 text-textMain", className)}
-            {...props}
-          />
-        ),
-        IconRight: ({ className, ...props }) => (
-          <ChevronRight
-            className={cn("h-4 w-4 text-textMain", className)}
-            {...props}
-          />
-        )
-      }}
+      // --- KLJUČNA ISPRAVKA JE OVDE ---
+      components={
+        {
+          IconLeft: () => <ChevronLeft className="h-4 w-4 text-textMain" />,
+          IconRight: () => <ChevronRight className="h-4 w-4 text-textMain" />
+        } as React.ComponentProps<typeof DayPicker>["components"]
+      }
       {...props}
     />
   );

@@ -35,11 +35,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           {value ? format(value, "PPP") : <span>Choose date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        align="center"
-        className="fixed top-[-15rem] left-1/2 -translate-x-1/2 w-auto p-0"
-      >
+      <PopoverContent side="top" align="center" className="w-auto p-0">
         <Calendar
           mode="single"
           selected={value || undefined}
@@ -48,6 +44,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
             setIsOpen(false);
           }}
           initialFocus
+          fixedWeeks
         />
       </PopoverContent>
     </Popover>
