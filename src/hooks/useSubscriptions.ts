@@ -23,7 +23,7 @@ export const useSubscriptions = () => {
       if (user) {
         const collectionRef = collection(db, "subscriptions");
 
-        const sbuscribtionsQuery = query(
+        const subscriptionQuery = query(
           collectionRef,
           where("userId", "==", user.uid),
           orderBy("date", "asc") // Sort by last created documents
@@ -32,7 +32,7 @@ export const useSubscriptions = () => {
         setSubscriptionsLoading(true);
 
         const unsubscribeSubscribtions = onSnapshot(
-          sbuscribtionsQuery,
+          subscriptionQuery,
           snapshot => {
             const newData = snapshot.docs.map(doc => {
               const data = doc.data();

@@ -40,7 +40,7 @@ export default function ErrorComponent({ error }: ErrorComponentProps) {
           </div>
 
           {/* Error Content */}
-          <div className="space-y-3">
+          <div className="space-y-3 flex-1 min-w-0">
             <h3 className="text-xl font-bold text-red-600">
               Oops! Something went wrong
             </h3>

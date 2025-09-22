@@ -1,6 +1,8 @@
 import { toast } from "react-hot-toast";
 
 export const showToast = (type: "success" | "error", message: string) => {
+  toast.dismiss();
+
   toast[type](message, {
     style: {
       border: "1px solid rgb(229 231 235)",

@@ -12,8 +12,7 @@ import { useSubscriptions } from "@/hooks/useSubscriptions";
 import useDateTracker from "@/hooks/useDateTracker";
 
 export default function Home() {
-  console.log(1);
-  const { userCurrency, userCategories } = useUserPreferences(); // Valuta i kategorije koje koristi korisnik
+  const { userCurrency, userCategories } = useUserPreferences(); // Currency and categories for current user
   const {
     expensesCurrentMonth,
     expensesSevenDays,

@@ -50,6 +50,7 @@ export const useExchangeRates = (currency: string) => {
         };
 
         setExchangeRates(data.rates);
+        console.log(data.rates);
       } catch (err) {
         if (!controller.signal.aborted) {
           setErrorExchanges(

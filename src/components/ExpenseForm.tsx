@@ -14,12 +14,14 @@ import { Select } from "./shared/Select";
 
 interface Props {
   userCategories: CategoryItem[] | undefined;
+  onSuccess?: () => void; // Add onSuccess callback prop
 }
 
-export default function ExpenseForm({ userCategories }: Props) {
+export default function ExpenseForm({ userCategories, onSuccess }: Props) {
   const [expense, setExpense] = useState<Expense>({
     amount: 0,
     description: "",
+    descriptionLowerCase: "",
     category: "other",
     currency: "EUR",
     date: new Date(),
@@ -35,24 +37,29 @@ export default function ExpenseForm({ userCategories }: Props) {
       return;
     }
 
+    const updatedExpense = {
+      ...expense,
+      descriptionLowerCase: expense.description.toLowerCase(),
+      date: new Date(),
+      userId: user.uid
+    };
+
     // Add document ("expense") to Firebase "expenses" collection
     try {
-      await addDoc(collection(db, "expenses"), {
-        ...expense,
-        date: new Date(),
-        userId: user.uid
-      });
+      await addDoc(collection(db, "expenses"), updatedExpense);
 
       // Clear form after successful submission
       setExpense({
         amount: 0,
         description: "",
+        descriptionLowerCase: "",
         category: "other",
         currency: "EUR",
         date: new Date(),
         userId: ""
       });
       showToast("success", "Successfully Added");
+      onSuccess?.();
     } catch (error) {
       showToast("error", "Something went wrong!");
       console.error(error);
@@ -62,7 +69,7 @@ export default function ExpenseForm({ userCategories }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-full"
+      className="bg-componentsBackground p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-full"
     >
       <h2 className="text-2xl font-bold text-textSecond mb-6 text-center">
         Add Expense
@@ -77,9 +84,22 @@ export default function ExpenseForm({ userCategories }: Props) {
           type="number"
           placeholder="0.00"
           value={expense.amount || ""}
-          onChange={e =>
-            setExpense({ ...expense, amount: Number(e.target.value) })
-          }
+          onKeyDown={e => {
+            // Block +, -, e, E (exponent)
+            if (["e", "E", "+", "-"].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onChange={e => {
+            const value = e.target.value;
+            if (value === "" || /^(\d+\.?\d*|\.\d+)$/.test(value)) {
+              // Allow empty string or decimal positive numbers
+              setExpense({
+                ...expense,
+                amount: value === "" ? 0 : Number(value)
+              });
+            }
+          }}
           required
         />
       </div>
@@ -114,10 +134,15 @@ export default function ExpenseForm({ userCategories }: Props) {
         </label>
         <InputTextNumberPass
           type="text"
+          // Max number of characters 100
+          maxLength={100}
           placeholder="e.g., Groceries"
           value={expense.description}
           onChange={e =>
-            setExpense({ ...expense, description: e.target.value })
+            setExpense({
+              ...expense,
+              description: e.target.value.slice(0, 100) // Max number of characters 100
+            })
           }
           required
         />

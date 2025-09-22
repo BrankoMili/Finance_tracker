@@ -51,6 +51,7 @@ export default function PendingExpenses({
   const [subscription, setSubscription] = useState<Expense>({
     amount: 0,
     description: "",
+    descriptionLowerCase: "",
     category: "other",
     currency: "EUR",
     date: new Date(),
@@ -67,6 +68,11 @@ export default function PendingExpenses({
       return;
     }
 
+    if (subscription.amount === 0) {
+      showToast("error", "Amount field has the value 0");
+      return;
+    }
+
     // Add document to Firebase "subscriptions" collection
     try {
       await addDoc(collection(db, "subscriptions"), {
@@ -78,12 +84,14 @@ export default function PendingExpenses({
       setSubscription({
         amount: 0,
         description: "",
+        descriptionLowerCase: "",
         category: "other",
         currency: "EUR",
         date: new Date(),
         userId: ""
       });
       showToast("success", "Successfully Added");
+      handleFormToggle(false);
     } catch (error) {
       showToast("error", "Something went wrong!");
       console.error(error);
@@ -121,8 +129,15 @@ export default function PendingExpenses({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (formRef.current && !formRef.current.contains(event.target as Node)) {
-        setShowSubscriptionForm(false);
+      const isDatePickerClick = (event.target as Element).closest(
+        "#DatePicker_popover_id"
+      );
+
+      if (
+        formRef.current &&
+        !formRef.current.contains(event.target as Node) &&
+        !isDatePickerClick
+      ) {
         handleFormToggle(false);
       }
     };
@@ -155,7 +170,6 @@ export default function PendingExpenses({
           <p
             className="absolute top-2 right-4 font-bold text-textSecond cursor-pointer hover:bg-border w-6 h-6 flex items-center justify-center rounded-xl"
             onClick={() => {
-              setShowSubscriptionForm(false);
               handleFormToggle(false);
             }}
           >
@@ -173,11 +187,21 @@ export default function PendingExpenses({
               type="number"
               placeholder="0.00"
               value={subscription.amount || ""}
+              onKeyDown={e => {
+                // Block +, -, e, E (exponent)
+                if (["e", "E", "+", "-"].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               onChange={e => {
-                setSubscription({
-                  ...subscription,
-                  amount: Number(e.target.value)
-                });
+                const value = e.target.value;
+                if (value === "" || /^(\d+\.?\d*|\.\d+)$/.test(value)) {
+                  // Allow empty string or decimal positive numbers
+                  setSubscription({
+                    ...subscription,
+                    amount: value === "" ? 0 : Number(value)
+                  });
+                }
               }}
               required
             />
@@ -212,12 +236,14 @@ export default function PendingExpenses({
             </label>
             <InputTextNumberPass
               type="text"
+              // Max number of characters 100
+              maxLength={100}
               placeholder="e.g., Youtube Premium"
               value={subscription.description}
               onChange={e =>
                 setSubscription({
                   ...subscription,
-                  description: e.target.value
+                  description: e.target.value.slice(0, 100) // Max number of characters 100
                 })
               }
               required

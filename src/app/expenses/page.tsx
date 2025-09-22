@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, useRef } from "react";
 import { format } from "date-fns";
 import {
   MagnifyingGlassIcon,
@@ -26,10 +26,17 @@ import { InputTextNumberPass } from "@/components/shared/InputTextNumberPass";
 import { Select } from "@/components/shared/Select";
 import { DatePicker } from "@/components/shared/DatePicker";
 import ErrorComponent from "@/components/ErrorComponent";
+import { useOverlay } from "@/context/OverlayContext";
+import { Modal } from "@/components/shared/Modal";
 
 export default function Expenses() {
+  const { toggleOverlay } = useOverlay();
+  const editFormRef = useRef<HTMLDivElement>(null);
+  const expenseFormRef = useRef<HTMLDivElement>(null);
   const [sortCategories, setSortCategories] = useState("descending");
   const { userCurrency, userCategories } = useUserPreferences();
+  const [searchInput, setSearchInput] = useState("");
+  const [applySearch, setApplySearch] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<Filters>({
     category: "",
     minAmount: 0,
@@ -46,8 +53,10 @@ export default function Expenses() {
     endDate: null,
     currency: ""
   });
-  const { expenses, expensesLoading, expensesError } =
-    useExpenses(appliedFilters);
+  const { expenses, expensesLoading, expensesError } = useExpenses(
+    appliedFilters,
+    applySearch
+  );
   const { exchangeRates, isExchangesLoading, errorExchanges } =
     useExchangeRates(userCurrency);
   const [showFilters, setShowFilters] = useState(false);
@@ -56,6 +65,30 @@ export default function Expenses() {
   const [expenseFormOpen, setExpenseFormOpen] = useState<boolean>(false);
   const [editForm, setEditForm] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<Expense | undefined>(undefined);
+  const [deleteItemModal, setDeleteItemModal] = useState<boolean>(false);
+
+  const handleEditFormToggle = (isOpen: boolean) => {
+    setEditForm(isOpen);
+    toggleOverlay(isOpen);
+  };
+
+  const handleExpenseFormToggle = (isOpen: boolean) => {
+    setExpenseFormOpen(isOpen);
+    toggleOverlay(isOpen);
+  };
+
+  // Handle search for items
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setApplySearch(searchInput);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput]);
 
   const deleteItem = async (itemId: string) => {
     try {
@@ -73,6 +106,16 @@ export default function Expenses() {
       return;
     }
 
+    if (editItem.description === "") {
+      showToast("error", "Description field is empty");
+      return;
+    }
+
+    if (editItem.amount === 0) {
+      showToast("error", "Amount field has the value 0");
+      return;
+    }
+
     try {
       const expenseRef = doc(db, "expenses", editItem.id);
 
@@ -85,7 +128,7 @@ export default function Expenses() {
       });
 
       showToast("success", "Successfully modified");
-      setEditForm(false);
+      handleEditFormToggle(false);
       setEditItem(undefined);
     } catch (error) {
       console.error(error);
@@ -118,14 +161,53 @@ export default function Expenses() {
     expensesError
   ]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const isDatePickerClick = (event.target as Element).closest(
+        "#DatePicker_popover_id"
+      );
+
+      if (
+        editFormRef.current &&
+        !editFormRef.current.contains(event.target as Node) &&
+        !isDatePickerClick
+      ) {
+        handleEditFormToggle(false);
+      }
+
+      if (
+        expenseFormRef.current &&
+        !expenseFormRef.current.contains(event.target as Node) &&
+        !isDatePickerClick
+      ) {
+        handleExpenseFormToggle(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFilters({
-      ...filters,
-      [name]: value
-    });
+    if (name === "minAmount" || name === "maxAmount") {
+      if (value === "" || /^(\d+\.?\d*|\.\d+)$/.test(value)) {
+        // Allow empty string or decimal positive numbers
+        setFilters({
+          ...filters,
+          [name]: value === "" ? 0 : Number(value)
+        });
+      }
+    } else {
+      setFilters({
+        ...filters,
+        [name]: value
+      });
+    }
   };
 
   const applyFilters = () => {
@@ -165,6 +247,8 @@ export default function Expenses() {
               <MagnifyingGlassIcon className="h-5 w-5 text-textThird" />
             </div>
             <input
+              value={searchInput}
+              onChange={handleSearch}
               type="text"
               placeholder="Search..."
               className="h-10 pl-10 pr-4 py-2 rounded-lg bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-black placeholder-textThird w-full"
@@ -188,10 +272,13 @@ export default function Expenses() {
 
       {/* EDIT Form */}
       {editForm && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto p-6 mt-8 bg-gray-50 rounded-lg border border-gray-200 animate-fadeIn">
+        <div
+          ref={editFormRef}
+          className="z-40 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto p-6 mt-8 bg-gray-50 rounded-lg border border-gray-200 animate-fadeIn"
+        >
           <XMarkIcon
             className="absolute right-3 top-2 h-6 w-6 text-textThird cursor-pointer hover:bg-[rgb(233,233,233)] w-6 h-6 flex items-center justify-center rounded-xl"
-            onClick={() => setEditForm(false)}
+            onClick={() => handleEditFormToggle(false)}
           />
           {editItem !== undefined && (
             <div className="mt-5 space-y-4">
@@ -202,10 +289,12 @@ export default function Expenses() {
                 <InputTextNumberPass
                   textSize="small"
                   type="text"
+                  // Max number of characters 100
+                  maxLength={100}
                   onChange={e =>
                     setEditItem(prevState => ({
                       ...prevState!,
-                      description: e.target.value
+                      description: e.target.value.slice(0, 100) // Max number of characters 100
                     }))
                   }
                   value={editItem.description}
@@ -213,32 +302,47 @@ export default function Expenses() {
 
                 {/* Category */}
                 <label className="text-sm font-medium w-24">Category:</label>
-
-                <InputTextNumberPass
+                <Select
                   textSize="small"
-                  type="text"
+                  value={editItem.category}
                   onChange={e =>
                     setEditItem(prevState => ({
                       ...prevState!,
                       category: e.target.value
                     }))
                   }
-                  value={editItem.category}
-                />
+                >
+                  {userCategories?.map(category => {
+                    return (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    );
+                  })}
+                </Select>
 
                 {/* Amount */}
                 <label className="text-sm font-medium w-24">Amount:</label>
                 <InputTextNumberPass
                   textSize="small"
                   type="number"
-                  step="0.01"
-                  onChange={e =>
-                    setEditItem(prevState => ({
-                      ...prevState!,
-                      amount: parseFloat(e.target.value)
-                    }))
-                  }
-                  value={editItem.amount}
+                  onKeyDown={e => {
+                    // Block +, -, e, E (exponent)
+                    if (["e", "E", "+", "-"].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={e => {
+                    const value = e.target.value;
+                    if (value === "" || /^(\d+\.?\d*|\.\d+)$/.test(value)) {
+                      // Allow empty string or decimal positive numbers
+                      setEditItem(prevState => ({
+                        ...prevState!,
+                        amount: value === "" ? 0 : Number(value)
+                      }));
+                    }
+                  }}
+                  value={editItem.amount || ""}
                 />
 
                 {/* Currency */}
@@ -276,7 +380,7 @@ export default function Expenses() {
               {/* Buttons */}
               <div className="flex justify-end gap-2 mt-4">
                 <Button
-                  onClick={() => setEditForm(false)}
+                  onClick={() => handleEditFormToggle(false)}
                   text="Cancel"
                   buttonWidth="compact"
                   buttonSize="small"
@@ -340,6 +444,12 @@ export default function Expenses() {
                 type="number"
                 name="minAmount"
                 value={filters.minAmount || ""}
+                onKeyDown={e => {
+                  // Block +, -, e, E (exponent)
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={handleFilterChange}
                 placeholder="0"
               />
@@ -354,6 +464,12 @@ export default function Expenses() {
                 type="number"
                 name="maxAmount"
                 value={filters.maxAmount || ""}
+                onKeyDown={e => {
+                  // Block +, -, e, E (exponent)
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={handleFilterChange}
                 placeholder="1000"
               />
@@ -481,7 +597,7 @@ export default function Expenses() {
               <span className="w-1/5 flex items-center">
                 <PencilIcon
                   onClick={() => {
-                    setEditForm(!editForm);
+                    handleEditFormToggle(!editForm);
                     setEditItem(item);
                   }}
                   className="h-5 w-5 text-primary mr-4 cursor-pointer"
@@ -489,6 +605,7 @@ export default function Expenses() {
                 <TrashIcon
                   onClick={() => {
                     if (item.id) {
+                      setDeleteItemModal(true);
                       deleteItem(item.id);
                     }
                   }}
@@ -568,21 +685,27 @@ export default function Expenses() {
         </span>
       </div>
 
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md ">
-        {expenseFormOpen && (
+      {expenseFormOpen && (
+        <div
+          ref={expenseFormRef}
+          className="z-40 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mx-auto max-h-[80vh] overflow-y-auto mt-8 w-11/12 max-w-md "
+        >
           <div className="relative">
-            <ExpenseForm userCategories={userCategories} />
+            <ExpenseForm
+              userCategories={userCategories}
+              onSuccess={() => handleExpenseFormToggle(false)}
+            />
             <XMarkIcon
               className="absolute right-3 top-2 h-6 w-6 text-textThird cursor-pointer hover:bg-border w-6 h-6 flex items-center justify-center rounded-xl"
-              onClick={() => setExpenseFormOpen(!expenseFormOpen)}
+              onClick={() => handleExpenseFormToggle(false)}
             />
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className="justify-end flex mt-4">
         <Button
           text="Add New"
-          onClick={() => setExpenseFormOpen(!expenseFormOpen)}
+          onClick={() => handleExpenseFormToggle(!expenseFormOpen)}
           buttonWidth="compact"
         />
       </div>

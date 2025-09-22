@@ -22,7 +22,10 @@ const defaultFilters: Filters = {
   currency: ""
 };
 
-export const useExpenses = (appliedFilters: Filters = defaultFilters) => {
+export const useExpenses = (
+  appliedFilters: Filters = defaultFilters,
+  applySearch: String = ""
+) => {
   const { startTimestamp, endTimestamp } = useMonth();
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
   const [expenses, setExpenses] = useState<Expense[]>();
@@ -39,6 +42,17 @@ export const useExpenses = (appliedFilters: Filters = defaultFilters) => {
           where("userId", "==", user.uid),
           orderBy("date", "desc")
         ];
+
+        if (applySearch) {
+          queryConditions.push(
+            where("descriptionLowerCase", ">=", applySearch.toLowerCase()),
+            where(
+              "descriptionLowerCase",
+              "<=",
+              applySearch.toLowerCase() + "\uf8ff"
+            )
+          );
+        }
 
         if (appliedFilters) {
           // Apply category filter
@@ -212,7 +226,7 @@ export const useExpenses = (appliedFilters: Filters = defaultFilters) => {
 
     // Clean up auth listener on component unmount
     return () => unsubscribeAuth();
-  }, [appliedFilters]);
+  }, [appliedFilters, applySearch]);
 
   return {
     expenses,
