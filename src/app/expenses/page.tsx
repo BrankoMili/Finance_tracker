@@ -27,7 +27,6 @@ import { Select } from "@/components/shared/Select";
 import { DatePicker } from "@/components/shared/DatePicker";
 import ErrorComponent from "@/components/ErrorComponent";
 import { useOverlay } from "@/context/OverlayContext";
-import { Modal } from "@/components/shared/Modal";
 
 export default function Expenses() {
   const { toggleOverlay } = useOverlay();
@@ -65,7 +64,6 @@ export default function Expenses() {
   const [expenseFormOpen, setExpenseFormOpen] = useState<boolean>(false);
   const [editForm, setEditForm] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<Expense | undefined>(undefined);
-  const [deleteItemModal, setDeleteItemModal] = useState<boolean>(false);
 
   const handleEditFormToggle = (isOpen: boolean) => {
     setEditForm(isOpen);
@@ -605,7 +603,6 @@ export default function Expenses() {
                 <TrashIcon
                   onClick={() => {
                     if (item.id) {
-                      setDeleteItemModal(true);
                       deleteItem(item.id);
                     }
                   }}
