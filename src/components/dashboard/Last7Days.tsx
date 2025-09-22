@@ -71,7 +71,7 @@ export default function Last7Days({
     today.setHours(0, 0, 0, 0);
 
     for (let i = 6; i >= 0; i--) {
-      const date = subDays(today, i + 1);
+      const date = subDays(today, i);
       dateObjects.push(date);
       datesLabels.push(format(date, "dd-MM"));
     }

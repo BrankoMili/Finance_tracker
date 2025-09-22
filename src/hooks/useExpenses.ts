@@ -108,21 +108,25 @@ export const useExpenses = (
           orderBy("date", "desc") // Sort by last created documents
         );
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
-        const sevenDaysAgo = new Date(today);
-        sevenDaysAgo.setDate(today.getDate() - 7);
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999);
 
-        const sevenDaysAgoTimestamp = Timestamp.fromDate(sevenDaysAgo);
-        const todayTimestamp = Timestamp.fromDate(today);
+        const sevenDaysAgoStart = new Date(todayStart);
+        // Idemo 6 dana unazad od danas da bismo dobili opseg od 7 dana
+        sevenDaysAgoStart.setDate(todayStart.getDate() - 6);
+
+        const sevenDaysAgoTimestamp = Timestamp.fromDate(sevenDaysAgoStart);
+        const todayEndTimestamp = Timestamp.fromDate(todayEnd);
 
         const expenses7DaysQuery = query(
           collectionRef,
           where("userId", "==", user.uid),
           orderBy("date", "desc"),
           where("date", ">=", sevenDaysAgoTimestamp),
-          where("date", "<", todayTimestamp)
+          where("date", "<=", todayEndTimestamp) // Ključna promena ovde
         );
 
         let expensesLoaded = false;
