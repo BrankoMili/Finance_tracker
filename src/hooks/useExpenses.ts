@@ -24,7 +24,7 @@ const defaultFilters: Filters = {
 
 export const useExpenses = (
   appliedFilters: Filters = defaultFilters,
-  applySearch: String = ""
+  applySearch: string = ""
 ) => {
   const { startTimestamp, endTimestamp } = useMonth();
   const [expensesLoading, setExpensesLoading] = useState<boolean>(true);
@@ -226,7 +226,7 @@ export const useExpenses = (
 
     // Clean up auth listener on component unmount
     return () => unsubscribeAuth();
-  }, [appliedFilters, applySearch]);
+  }, [appliedFilters, applySearch, startTimestamp, endTimestamp]);
 
   return {
     expenses,
